@@ -1,0 +1,340 @@
+# Data Quality Rules for PanganWatch
+# Each rule maps to a DAMA dimension: completeness, validity, accuracy, consistency, timeliness, uniqueness
+# Severity: "error" -> record goes to governance.quarantine; "warn" -> record marked but allowed into silver
+
+rules:
+  # ---- Food Prices (silver.harga_pangan) ----
+  - rule_id: "HP-001"
+    dataset: "silver.harga_pangan"
+    column: "tanggal"
+    type: "not_null"
+    params: {}
+    dimension: "completeness"
+    severity: "error"
+    owner: "data-steward"
+    description: "Date is required for every food-price record"
+
+  - rule_id: "HP-002"
+    dataset: "silver.harga_pangan"
+    column: "kode_provinsi_bps"
+    type: "not_null"
+    params: {}
+    dimension: "completeness"
+    severity: "error"
+    owner: "data-steward"
+    description: "BPS province code is required"
+
+  - rule_id: "HP-003"
+    dataset: "silver.harga_pangan"
+    column: "komoditas_id"
+    type: "not_null"
+    params: {}
+    dimension: "completeness"
+    severity: "error"
+    owner: "data-steward"
+    description: "Commodity ID is required"
+
+  - rule_id: "HP-004"
+    dataset: "silver.harga_pangan"
+    column: "harga"
+    type: "not_null"
+    params: {}
+    dimension: "completeness"
+    severity: "error"
+    owner: "data-steward"
+    description: "Price is required"
+
+  - rule_id: "HP-005"
+    dataset: "silver.harga_pangan"
+    column: "harga"
+    type: "range"
+    params:
+      min: 1
+      max: 1000000
+    dimension: "validity"
+    severity: "error"
+    owner: "data-steward"
+    description: "Price must be > 0 and < 1,000,000 per unit"
+
+  - rule_id: "HP-006"
+    dataset: "silver.harga_pangan"
+    column: "kode_provinsi_bps"
+    type: "in_reference"
+    params:
+      reference_table: "ref.ref_provinsi"
+      reference_column: "kode_bps"
+    dimension: "consistency"
+    severity: "error"
+    owner: "data-steward"
+    description: "BPS province code must exist in ref.ref_provinsi"
+
+  - rule_id: "HP-007"
+    dataset: "silver.harga_pangan"
+    column: "komoditas_id"
+    type: "in_reference"
+    params:
+      reference_table: "ref.ref_komoditas"
+      reference_column: "komoditas_id"
+    dimension: "consistency"
+    severity: "error"
+    owner: "data-steward"
+    description: "Commodity ID must exist in ref.ref_komoditas"
+
+  - rule_id: "HP-008"
+    dataset: "silver.harga_pangan"
+    column: "natural_key"
+    type: "unique_key"
+    params:
+      key_columns:
+        - "tanggal"
+        - "kode_provinsi_bps"
+        - "kode_kabkota_bps"
+        - "komoditas_id"
+        - "jenis_pasar"
+        - "source"
+    dimension: "uniqueness"
+    severity: "error"
+    owner: "data-steward"
+    description: "The natural key must be unique (duplicate check via upsert)"
+
+  - rule_id: "HP-009"
+    dataset: "silver.harga_pangan"
+    column: "tanggal"
+    type: "range"
+    params:
+      max_future_days: 0
+    dimension: "validity"
+    severity: "error"
+    owner: "data-steward"
+    description: "Date must not be in the future (Asia/Jakarta timezone)"
+
+  - rule_id: "HP-010"
+    dataset: "silver.harga_pangan"
+    column: "harga"
+    type: "max_pct_change"
+    params:
+      max_pct: 100
+      partition_by:
+        - "kode_provinsi_bps"
+        - "kode_kabkota_bps"
+        - "komoditas_id"
+        - "jenis_pasar"
+        - "source"
+      order_by: "tanggal"
+    dimension: "accuracy"
+    severity: "warn"
+    owner: "data-steward"
+    description: "Month-over-month price change for the same key <= 100% (HDX WFP data is monthly grain)"
+
+  - rule_id: "HP-011"
+    dataset: "silver.harga_pangan"
+    column: "tanggal"
+    type: "freshness"
+    params:
+      max_lag_days: 45
+    dimension: "timeliness"
+    severity: "warn"
+    owner: "data-steward"
+    description: "Latest date <= 45 days ago (HDX WFP is MONTHLY-grain, not daily -- DEC-033; 45 days = ~1.5 monthly cycles, lenient toward the source's publication delay)"
+
+  - rule_id: "HP-012"
+    dataset: "silver.harga_pangan"
+    column: "completeness_ratio"
+    type: "completeness_ratio"
+    params:
+      group_by: "tanggal"
+      target_column: "kode_provinsi_bps"
+      min_ratio: 0.8
+      filter:
+        column: "komoditas_id"
+        values:
+          - "0101"
+          - "0104"
+    dimension: "completeness"
+    severity: "warn"
+    owner: "data-steward"
+    description: "Per date, >= 80% of the 38 provinces have data for the main commodities that ARE present in HDX WFP (beras 0101, bawang merah 0104; chili is absent from the 2025-06..2026-06 data window) -- the old filter used a fake id so it passed vacuously (DEC-036)"
+
+  - rule_id: "HP-014"
+    dataset: "silver.harga_pangan"
+    column: "kode_provinsi_bps"
+    type: "completeness_ratio"
+    params:
+      group_by: "tanggal"
+      target_column: "kode_provinsi_bps"
+      expected_distinct: 38
+      min_ratio: 1.0
+    dimension: "completeness"
+    severity: "warn"
+    owner: "data-steward"
+    description: "Province coverage: per date, all 38 provinces have price data. Actual 34/38 (89.5%): Papua Selatan, Papua Tengah, Papua Pegunungan, Papua Barat Daya never appear in HDX WFP -- a real data-quality finding, deliberately failing (warn), see incident_log.md (DEC-036)"
+
+  # ---- Daily Weather (silver.cuaca_harian) ----
+  - rule_id: "CH-001"
+    dataset: "silver.cuaca_harian"
+    column: "tanggal"
+    type: "not_null"
+    params: {}
+    dimension: "completeness"
+    severity: "error"
+    owner: "data-steward"
+    description: "Date is required for daily weather"
+
+  - rule_id: "CH-002"
+    dataset: "silver.cuaca_harian"
+    column: "kode_provinsi_bps"
+    type: "not_null"
+    params: {}
+    dimension: "completeness"
+    severity: "error"
+    owner: "data-steward"
+    description: "BPS province code is required for weather"
+
+  - rule_id: "CH-003"
+    dataset: "silver.cuaca_harian"
+    column: "precipitation_mm"
+    type: "not_null"
+    params: {}
+    dimension: "completeness"
+    severity: "error"
+    owner: "data-steward"
+    description: "Rainfall is required"
+
+  - rule_id: "CH-004"
+    dataset: "silver.cuaca_harian"
+    column: "precipitation_mm"
+    type: "range"
+    params:
+      min: 0
+      max: 500
+    dimension: "validity"
+    severity: "error"
+    owner: "data-steward"
+    description: "Rainfall must be 0-500 mm/day"
+
+  - rule_id: "CH-005"
+    dataset: "silver.cuaca_harian"
+    column: "tmin_c"
+    type: "range"
+    params:
+      min: -10
+      max: 50
+    dimension: "accuracy"
+    severity: "error"
+    owner: "data-steward"
+    description: "Minimum temperature must be -10 to 50 C"
+
+  - rule_id: "CH-006"
+    dataset: "silver.cuaca_harian"
+    column: "tmax_c"
+    type: "range"
+    params:
+      min: -10
+      max: 50
+    dimension: "accuracy"
+    severity: "error"
+    owner: "data-steward"
+    description: "Maximum temperature must be -10 to 50 C"
+
+  - rule_id: "CH-007"
+    dataset: "silver.cuaca_harian"
+    column: "tmin_c"
+    type: "custom_range"
+    params:
+      check: "tmin_c <= tmax_c"
+      other_column: "tmax_c"
+    dimension: "accuracy"
+    severity: "error"
+    owner: "data-steward"
+    description: "Minimum temperature must be <= maximum temperature"
+
+  - rule_id: "CH-008"
+    dataset: "silver.cuaca_harian"
+    column: "natural_key"
+    type: "unique_key"
+    params:
+      key_columns:
+        - "tanggal"
+        - "kode_provinsi_bps"
+    dimension: "uniqueness"
+    severity: "error"
+    owner: "data-steward"
+    description: "The (tanggal, kode_provinsi_bps) key must be unique"
+
+  # ---- Current Weather (silver.cuaca_terkini) ----
+  - rule_id: "CT-001"
+    dataset: "silver.cuaca_terkini"
+    column: "observed_at"
+    type: "freshness"
+    params:
+      max_lag_multiplier: 2
+      poll_interval_seconds: 900
+    dimension: "timeliness"
+    severity: "warn"
+    owner: "data-steward"
+    description: "Latest observed_at <= 2x the polling interval"
+
+  # ---- Inflation (silver.inflasi_kota) ----
+  - rule_id: "IN-001"
+    dataset: "silver.inflasi_kota"
+    column: "inflasi_mtm"
+    type: "range"
+    params:
+      min: -20
+      max: 50
+      allow_null: true
+    dimension: "validity"
+    severity: "warn"
+    owner: "data-steward"
+    description: "Month-over-month inflation (derived from the BPS IHK) between -20% and 50%; NULL is allowed in the first month of a series (it cannot be derived)"
+
+  # ---- Reference Data ----
+  - rule_id: "RF-001"
+    dataset: "ref.ref_provinsi"
+    column: "row_count"
+    type: "row_count"
+    params:
+      expected: 38
+    dimension: "completeness"
+    severity: "error"
+    owner: "data-steward"
+    description: "There must be exactly 38 province rows"
+
+  - rule_id: "RF-002"
+    dataset: "ref.ref_provinsi"
+    column: "lat"
+    type: "range"
+    params:
+      min: -11.5
+      max: 6.5
+    dimension: "validity"
+    severity: "error"
+    owner: "data-steward"
+    description: "Province latitude must be within Indonesia's bounds"
+
+  - rule_id: "RF-003"
+    dataset: "ref.ref_provinsi"
+    column: "lon"
+    type: "range"
+    params:
+      min: 94.5
+      max: 141.5
+    dimension: "validity"
+    severity: "error"
+    owner: "data-steward"
+    description: "Province longitude must be within Indonesia's bounds"
+
+  # ---- Cross Source Diff (warn only, may be N/A if single source) ----
+  - rule_id: "HP-013"
+    dataset: "silver.harga_pangan"
+    column: "cross_source_diff"
+    type: "cross_source_diff"
+    params:
+      max_pct_diff: 15
+      group_by:
+        - "tanggal"
+        - "komoditas_id"
+    dimension: "consistency"
+    severity: "warn"
+    owner: "data-steward"
+    description: "Difference in the national median across sources <= 15% (N/A with a single source)"

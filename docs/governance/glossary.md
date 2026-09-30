@@ -1,0 +1,23 @@
+# Glossary
+
+Generated from `dbt\panganwatch\seeds\governance_glossary.csv` — **17 terms**
+
+| Term | Definition | Domain | Owner | Related Columns | Source |
+|------|------------|--------|-------|-----------------|--------|
+| HET | Harga Eceran Tinggi (ceiling retail price) - the highest observed price indicator for a commodity in a given region and period | Price | PanganWatch | harga,tanggal,komoditas_id | Bapanas |
+| bronze | The raw-data layer, with a metadata envelope (_meta.source, _meta.payload_sha256, _meta.fetched_at, 90-day TTL) | Data Architecture | PanganWatch | _meta.source,_meta.payload_sha256,_meta.fetched_at | PanganWatch |
+| crosswalk | A table mapping region codes between sources (BPS, Bapanas, WFP, BMKG) so data can be joined | Reference & Master Data | PanganWatch | kode_bps,kode_wfp,kode_bmkg | PanganWatch |
+| data consumer | The role that uses data for analysis, reporting, or decision-making (BI, data scientist) | Governance | PanganWatch | * | DAMA |
+| data custodian | The technical role managing storage infrastructure, backups, security, and physical data access | Governance | PanganWatch | * | DAMA |
+| data owner | The role holding decision authority over data, including access, retention, and usage policy | Governance | PanganWatch | * | DAMA |
+| data steward | The role responsible for the day-to-day quality, definitions, and use of data (operational) | Governance | PanganWatch | * | DAMA |
+| freshness | How recent the data is (e.g. price data no older than 30 days, weather data no older than 7 days) | Governance | PanganWatch | fetched_at,observed_at | DAMA |
+| gold | The analytics-mart layer (dimensional model: dim/fct/mart) produced by dbt transforms, for BI and reporting | Data Architecture | PanganWatch | * | PanganWatch |
+| heavy rain | Daily rainfall >= 50 mm (BMKG category), assumed to be able to disrupt distribution and harvests | Weather | PanganWatch | precipitation_mm | BMKG |
+| market type | Market classification: traditional (morning market, night market) or modern (minimarket, supermarket, hypermarket) | Price | PanganWatch | jenis_pasar | Bapanas |
+| national median | The middle value of a commodity's price distribution across all provinces on the same date; not sensitive to outliers | Price | PanganWatch | harga,tanggal | PanganWatch |
+| price disparity | The difference in price for the same commodity across regions (province/kab-kota), usually measured as a percentage of the national median | Price | PanganWatch | harga,kode_provinsi_bps | PanganWatch |
+| quarantine | A separate storage area for records that fail a DQ check (severity=error); these never reach silver | Governance | PanganWatch | run_id,rule_id,natural_key,record | PanganWatch |
+| retail price | The price the end consumer pays at a traditional or modern market, per unit (kg, litre, item) | Price | PanganWatch | harga,satuan | Bapanas |
+| run_id | A unique identifier for each ingestion pipeline run (format: timestamp-sequence), used for traceability | Governance | PanganWatch | run_id,loaded_at | PanganWatch |
+| silver | The structured, validated, integrated layer (FK to ref), ready for analytics and dbt modeling | Data Architecture | PanganWatch | * | PanganWatch |

@@ -1,0 +1,352 @@
+version: 2
+
+models:
+  - name: dim_provinsi
+    description: "Province dimension (1 row per province), from the ref.ref_provinsi seed (F2)."
+    columns:
+      - name: kode_provinsi_bps
+        description: "BPS province code (2 digits), primary key."
+        tests:
+          - unique
+          - not_null
+      - name: nama_provinsi
+        description: "Official province name."
+        tests:
+          - not_null
+      - name: ibu_kota
+        description: "Name of the province capital."
+        tests:
+          - not_null
+      - name: lat
+        description: "Latitude of the province capital (decimal degrees)."
+        tests:
+          - not_null
+      - name: lon
+        description: "Longitude of the province capital (decimal degrees)."
+        tests:
+          - not_null
+      - name: kode_kemendagri
+        description: "Kemendagri province code (nullable if the source is unavailable, see the F2 fallback)."
+
+  - name: dim_komoditas
+    description: "Commodity dimension (1 row per commodity), from the ref.ref_komoditas seed (F2)."
+    columns:
+      - name: komoditas_id
+        description: "Commodity code (4 digits), primary key."
+        tests:
+          - unique
+          - not_null
+      - name: nama_kanonis
+        description: "Canonical commodity name (e.g. 'beras', 'cabai rawit')."
+        tests:
+          - not_null
+      - name: kelompok
+        description: "Strategic commodity group."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [beras, cabai, bawang, daging, gula, minyak, telur]
+      - name: satuan
+        description: "Standard unit (kg, liter, item)."
+        tests:
+          - not_null
+      - name: het
+        description: "Harga Eceran Tertinggi (ceiling retail price), nullable — only set when an official HET source is found (F2)."
+
+  - name: dim_tanggal
+    description: "Date dimension (1 row per calendar date), spanning the union of the silver.harga_pangan and silver.cuaca_harian date ranges."
+    columns:
+      - name: tanggal
+        description: "Calendar date, primary key."
+        tests:
+          - unique
+          - not_null
+      - name: minggu_iso
+        description: "ISO 8601 week (format YYYY-Www)."
+        tests:
+          - not_null
+      - name: awal_minggu
+        description: "Monday (start) of the ISO week containing `tanggal`."
+        tests:
+          - not_null
+      - name: bulan
+        description: "Month number (1-12)."
+        tests:
+          - not_null
+      - name: tahun
+        description: "Calendar year."
+        tests:
+          - not_null
+      - name: is_weekend
+        description: "True if the date falls on Saturday/Sunday."
+        tests:
+          - not_null
+
+  - name: fct_harga_bulanan
+    description: >
+      Food-price fact table, grain date x province x commodity x jenis_pasar x
+      source. Named "bulanan" (not "harian" like fct_harga_harian in Appendix B)
+      because the price source (HDX WFP) is monthly-grain — every `tanggal`
+      value is a monthly snapshot date (DEC-010). Incremental materialization
+      with a composite unique_key.
+    columns:
+      - name: tanggal
+        description: "Price snapshot date."
+        tests:
+          - not_null
+      - name: kode_provinsi_bps
+        description: "BPS province code. Kab/kota rows are aggregated to province (median) — the HDX source's kode_kabkota_bps is always NULL."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_provinsi')
+              field: kode_provinsi_bps
+      - name: komoditas_id
+        description: "Commodity code."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_komoditas')
+              field: komoditas_id
+      - name: jenis_pasar
+        description: "Market type/name from the data source."
+        tests:
+          - not_null
+      - name: source
+        description: "Price source (e.g. 'HDX WFP')."
+        tests:
+          - not_null
+      - name: harga_median
+        description: "Median price for this key on this date."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1000000
+              inclusive: false
+      - name: harga_min
+        description: "Minimum price for this key on this date."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1000000
+              inclusive: false
+      - name: harga_max
+        description: "Maximum price for this key on this date."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1000000
+              inclusive: false
+      - name: n_observasi
+        description: "Number of silver.harga_pangan rows aggregated into this row."
+        tests:
+          - not_null
+      - name: n_dq_warn
+        description: >
+          Number of 'warn'-severity DQ flags on the rows aggregated into this
+          one. Currently always 0 (a placeholder) because the F4 rule engine
+          does not yet write a per-row DQ flag on silver rows; this is not a
+          fabricated value, just not implemented yet.
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - tanggal
+            - kode_provinsi_bps
+            - komoditas_id
+            - jenis_pasar
+            - source
+
+  - name: mart_disparitas_provinsi
+    description: >
+      Province price disparity vs. the national median, grain month x province
+      x commodity. Grain is "month" (not "week" per Appendix B) because the
+      price source is monthly-grain (DEC-010).
+    columns:
+      - name: bulan
+        description: "Month (the 1st of that month)."
+        tests:
+          - not_null
+      - name: kode_provinsi_bps
+        description: "BPS province code."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_provinsi')
+              field: kode_provinsi_bps
+      - name: komoditas_id
+        description: "Commodity code."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_komoditas')
+              field: komoditas_id
+      - name: harga_median_provinsi
+        description: "This province's median price for this month (the median of fct_harga_bulanan's harga_median)."
+        tests:
+          - not_null
+      - name: harga_median_nasional
+        description: "National median = the median of harga_median_provinsi across all provinces for this month+commodity."
+        tests:
+          - not_null
+      - name: pct_deviasi
+        description: "(province - national) / national x 100."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -100
+              max_value: 1000
+      - name: rank_deviasi
+        description: "Province rank by absolute deviation from the national median (1 = most deviant)."
+        tests:
+          - not_null
+
+  - name: mart_cuaca_harga_bulanan
+    description: >
+      Weather and price combined, per month x province x commodity group.
+      Named "bulanan" (not "mingguan" like mart_cuaca_harga_mingguan in
+      Appendix B) because the price grain is monthly (DEC-010). The
+      chili/shallot-vs-rain lag is computed separately in Python (F9) from
+      daily silver.cuaca_harian.
+    columns:
+      - name: bulan
+        description: "Month (the 1st of that month)."
+        tests:
+          - not_null
+      - name: kode_provinsi_bps
+        description: "BPS province code."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_provinsi')
+              field: kode_provinsi_bps
+      - name: kelompok
+        description: "Commodity group (beras, cabai, bawang, daging, gula, minyak, telur)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [beras, cabai, bawang, daging, gula, minyak, telur]
+      - name: harga_median
+        description: "Median of fct_harga_bulanan's harga_median for this group in this month."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1000000
+              inclusive: false
+      - name: hari_hujan_lebat
+        description: "Number of days in the month with precipitation_mm >= 50mm (the starting threshold for BMKG's 'heavy' category, config/settings.yaml, DEC-013)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 31
+      - name: total_hujan_mm
+        description: "Total rainfall for the month (mm)."
+      - name: pct_change_mom
+        description: "Percentage change in harga_median vs. the previous month (same group+province)."
+
+  - name: mart_dq_scorecard
+    description: >
+      Data quality scorecard per run date x source x DAMA dimension, from
+      governance.dq_results (F4). The "source" column is mapped from
+      `dataset` in dq_results (see the model SQL).
+    columns:
+      - name: tanggal_run
+        description: "Date the DQ rules were run."
+        tests:
+          - not_null
+      - name: source
+        description: "Dataset checked (e.g. silver.harga_pangan)."
+        tests:
+          - not_null
+      - name: dimensi
+        description: "DAMA dimension."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [completeness, validity, accuracy, consistency, timeliness, uniqueness]
+      - name: rules_total
+        description: "Number of distinct rules active for this dataset+dimension on tanggal_run."
+        tests:
+          - not_null
+      - name: rules_passed
+        description: "Number of rules with 0 failed rows (rows_failed=0)."
+        tests:
+          - not_null
+      - name: rows_checked
+        description: "Total rows checked (summed across rules)."
+        tests:
+          - not_null
+      - name: rows_failed
+        description: "Total rows that failed (summed across rules)."
+        tests:
+          - not_null
+      - name: score
+        description: "100 x (rows_checked - rows_failed) / rows_checked."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+  - name: mart_inflasi_vs_harga
+    description: >
+      City inflation (BPS IHK) paired with the food-price change in that
+      city's province, grain month x city (Appendix B). HDX WFP food prices
+      only cover 34 provinces and 2025-06..2026-06 (January 2026 is partial),
+      so pct_change_harga_pangan is NULL outside that window. Correlation, not
+      causation.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [bulan, kode_vervar]
+    columns:
+      - name: bulan
+        description: "Inflation observation month (the 1st of that month)."
+        tests:
+          - not_null
+      - name: kode_vervar
+        description: "City id in BPS variable 2245."
+        tests:
+          - not_null
+      - name: nama_kota
+        description: "BPS IHK city name."
+        tests:
+          - not_null
+      - name: kode_provinsi_bps
+        description: "BPS province code from the city mapping (ref_ihk_kota)."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_provinsi')
+                field: kode_provinsi_bps
+      - name: nama_provinsi
+        description: "Province name."
+      - name: ihk
+        description: "City Consumer Price Index (2022=100)."
+        tests:
+          - not_null
+      - name: inflasi_mtm
+        description: "Month-to-month inflation (%), computed from consecutive IHK values (NULL for the first month in the series)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -20
+                max_value: 50
+              config:
+                severity: warn
+      - name: inflasi_yoy
+        description: "Year-on-year inflation (%) from BPS (var 2249)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -20
+                max_value: 50
+              config:
+                severity: warn
+      - name: pct_change_harga_pangan
+        description: "Average MoM change (%) in the province x commodity median price vs. the previous calendar month (fct_harga_bulanan); NULL if that month's or the previous month's price is missing."
+      - name: n_komoditas
+        description: "Number of commodities used to compute pct_change_harga_pangan."

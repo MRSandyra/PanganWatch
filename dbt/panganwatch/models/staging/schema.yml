@@ -1,0 +1,244 @@
+version: 2
+
+models:
+  - name: stg_harga_pangan
+    description: "Staging model for silver.harga_pangan with cleaned and normalized data"
+    columns:
+      - name: id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: tanggal
+        description: "Price date"
+        tests:
+          - not_null
+      - name: kode_provinsi_bps
+        description: "BPS province code (2 digits)"
+        tests:
+          - not_null
+      - name: kode_kabkota_bps
+        description: "BPS kab/kota code (6 digits), nullable"
+      - name: komoditas_id
+        description: "Commodity code (4 digits)"
+        tests:
+          - not_null
+      - name: jenis_pasar
+        description: "Market type (Tradisional/Modern/Swasta)"
+        tests:
+          - not_null
+      - name: harga
+        description: "Price in rupiah"
+        tests:
+          - not_null
+      - name: satuan
+        description: "Price unit (Rp/kg, Rp/liter, etc.)"
+        tests:
+          - not_null
+      - name: source
+        description: "Data source (HDX WFP, PIHPS, BPS)"
+        tests:
+          - not_null
+      - name: run_id
+        description: "Pipeline run ID"
+        tests:
+          - not_null
+      - name: loaded_at
+        description: "Timestamp when loaded into silver"
+        tests:
+          - not_null
+
+  - name: stg_cuaca_harian
+    description: "Staging model for silver.cuaca_harian with cleaned weather data"
+    columns:
+      - name: id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: tanggal
+        description: "Weather observation date"
+        tests:
+          - not_null
+      - name: kode_provinsi_bps
+        description: "BPS province code (2 digits)"
+        tests:
+          - not_null
+      - name: precipitation_mm
+        description: "Daily rainfall (mm)"
+      - name: tmax_c
+        description: "Daily maximum temperature (Celsius)"
+      - name: tmin_c
+        description: "Daily minimum temperature (Celsius)"
+      - name: source
+        description: "Data source (open-meteo)"
+        tests:
+          - not_null
+      - name: run_id
+        description: "Pipeline run ID"
+        tests:
+          - not_null
+      - name: loaded_at
+        description: "Timestamp when loaded into silver"
+        tests:
+          - not_null
+
+  - name: stg_ref_provinsi
+    description: "Staging model for ref.ref_provinsi with province reference data"
+    columns:
+      - name: kode_bps
+        description: "BPS province code (2 digits)"
+        tests:
+          - unique
+          - not_null
+      - name: kode_kemendagri
+        description: "Kemendagri province code"
+      - name: nama_provinsi
+        description: "Official province name"
+        tests:
+          - not_null
+      - name: ibu_kota
+        description: "Province capital"
+      - name: lat
+        description: "Latitude"
+      - name: lon
+        description: "Longitude"
+      - name: source
+        description: "Data source"
+        tests:
+          - not_null
+
+  - name: stg_ref_komoditas
+    description: "Staging model for ref.ref_komoditas with commodity reference data"
+    columns:
+      - name: komoditas_id
+        description: "Commodity code (4 digits)"
+        tests:
+          - unique
+          - not_null
+      - name: nama_kanonis
+        description: "Canonical commodity name"
+        tests:
+          - not_null
+      - name: kelompok
+        description: "Commodity group"
+        tests:
+          - not_null
+      - name: satuan
+        description: "Standard unit"
+        tests:
+          - not_null
+      - name: het
+        description: "Harga Eceran Tertinggi (ceiling retail price)"
+
+  - name: stg_ref_provinsi_alias
+    description: "Staging model for ref.ref_provinsi_alias mapping source names to BPS codes"
+    columns:
+      - name: nama_sumber
+        description: "Province name as it appears in the external source"
+        tests:
+          - not_null
+      - name: sumber
+        description: "Source name (HDX, PIHPS, BPS)"
+        tests:
+          - not_null
+      - name: kode_bps
+        description: "BPS province code (2 digits)"
+        tests:
+          - not_null
+      - name: match_method
+        description: "Matching method (normalized_name, manual)"
+        tests:
+          - not_null
+      - name: alasan
+        description: "Reason for the match"
+
+  - name: stg_inflasi_kota
+    description: >
+      Staging for silver.inflasi_kota (BPS city IHK/inflation, F3b) plus the
+      IHK city -> kab/kota -> province mapping via the ref_ihk_kota seed.
+      Cities that couldn't be mapped still appear, with kode_provinsi_bps
+      NULL (reported by the assert_ihk_kota_all_mapped test).
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [bulan, kode_vervar]
+    columns:
+      - name: bulan
+        description: "Observation month (the 1st of that month)."
+        tests:
+          - not_null
+      - name: kode_vervar
+        description: "City id in BPS variable 2245 (not a region code)."
+        tests:
+          - not_null
+      - name: nama_kota
+        description: "IHK city name as published by BPS (e.g. KOTA MEDAN, MEULABOH)."
+        tests:
+          - not_null
+      - name: kode_kabkota_bps
+        description: "BPS kab/kota code from the ref_ihk_kota mapping (NULL for KOTA JAKARTA, which maps to a province)."
+      - name: kode_provinsi_bps
+        description: "BPS province code from the ref_ihk_kota mapping (NULL if the city could not be mapped)."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_ref_provinsi')
+                field: kode_bps
+      - name: match_method
+        description: "City mapping method (normalized_name or manual)."
+      - name: ihk
+        description: "City Consumer Price Index (2022=100)."
+        tests:
+          - not_null
+      - name: inflasi_mtm
+        description: "Month-to-month inflation (%), computed from consecutive IHK values; NULL for the first month in the series."
+      - name: inflasi_yoy
+        description: "Year-on-year inflation (%) as published by BPS (var 2249)."
+      - name: run_id
+        description: "Pipeline run ID"
+      - name: loaded_at
+        description: "Timestamp when loaded into silver"
+
+  - name: stg_dq_results
+    description: "Staging model for governance.dq_results (aggregated DQ rule results per run, F4)."
+    columns:
+      - name: id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: run_id
+        description: "Pipeline run ID that produced this DQ row"
+        tests:
+          - not_null
+      - name: rule_id
+        description: "DQ rule ID (config/dq_rules.yml)"
+        tests:
+          - not_null
+      - name: dataset
+        description: "Dataset checked (e.g. silver.harga_pangan)"
+        tests:
+          - not_null
+      - name: dimension
+        description: "DAMA dimension (completeness, validity, accuracy, consistency, timeliness, uniqueness)"
+        tests:
+          - not_null
+      - name: severity
+        description: "error or warn"
+        tests:
+          - not_null
+      - name: rows_checked
+        description: "Number of rows this rule checked"
+        tests:
+          - not_null
+      - name: rows_failed
+        description: "Number of rows that failed this rule"
+        tests:
+          - not_null
+      - name: pass_rate
+        description: "Percentage of rows that passed (0-100)"
+      - name: checked_at
+        description: "When this rule was run"
+        tests:
+          - not_null

@@ -1,0 +1,21 @@
+name: 'panganwatch'
+version: '1.0.0'
+config-version: 2
+profile: 'panganwatch'
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+models:
+  panganwatch:
+    +materialized: view
+seeds:
+  panganwatch:
+    +schema: ref
+    +quote_columns: false

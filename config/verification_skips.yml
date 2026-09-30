@@ -1,0 +1,8 @@
+# The list of check_ids allowed to be WARN (not FAIL) when skipped.
+# verify.py rejects any check_id not listed here (see ALLOWED_SKIP_CHECK_IDS
+# in scripts/verify.py and the F8b memory-gate note in README.md).
+#
+# Empty since 2026-09-26: F3b (BPS) is active (DEC-039/040/041 supersede DEC-014).
+# The BPS check must PASS when BPS_API_KEY is set; only when the key is empty
+# does verify.py print WARN.
+skips: []

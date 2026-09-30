@@ -1,0 +1,70 @@
+komoditas_id,nama_sumber,sumber,match_method,alasan
+0101,Beras Medium Stadion (30 kg),PIHPS,normalized_name,'Beras Medium Stadion (30 kg)' cocok dengan nama kanonis 'beras' (contains)
+0114,Cabai Merah Keriting 1 kg,PIHPS,manual,'Cabai Merah Keriting' = cabai keriting (0114); urutan kata beda dari nama kanonis sehingga tidak match otomatis
+0104,Bawang Merah 1 kg,PIHPS,normalized_name,'Bawang Merah 1 kg' cocok dengan nama kanonis 'bawang merah' (normalized)
+0106,Daging Sapi Segar 1 kg,PIHPS,normalized_name,'Daging Sapi Segar 1 kg' cocok dengan nama kanonis 'daging sapi' (normalized)
+0107,Telur Ayam Kampung 1 kg,PIHPS,normalized_name,'Telur Ayam Kampung 1 kg' cocok dengan nama kanonis 'telur ayam' (normalized)
+0108,Minyak Goreng Sawit 1 liter,PIHPS,normalized_name,'Minyak Goreng Sawit 1 liter' cocok dengan nama kanonis 'minyak goreng' (contains)
+0109,Gula Pasir Putih 1 kg,PIHPS,normalized_name,'Gula Pasir Putih 1 kg' cocok dengan nama kanonis 'gula pasir' (contains)
+0107,Telur Bebek 1 kg,PIHPS,normalized_name,'Telur Bebek 1 kg' cocok dengan nama kanonis 'telur ayam' (contains)
+0106,Daging Ayam Boiler 1 kg,PIHPS,normalized_name,'Daging Ayam Boiler 1 kg' cocok dengan nama kanonis 'daging sapi' (contains)
+0108,Minyak Kelapa 1 liter,PIHPS,normalized_name,'Minyak Kelapa 1 liter' cocok dengan nama kanonis 'minyak goreng' (contains)
+0113,Gula Merah 1 kg,PIHPS,normalized_name,'Gula Merah 1 kg' cocok dengan nama kanonis 'gula merah' (normalized)
+0102,Cabai Rawit 1 kg,PIHPS,normalized_name,'Cabai Rawit 1 kg' cocok dengan nama kanonis 'cabai rawit' (normalized)
+0105,Bawang Putih 1 kg,PIHPS,normalized_name,'Bawang Putih 1 kg' cocok dengan nama kanonis 'bawang putih' (normalized)
+0107,Telur Ayam Ras 1 kg,PIHPS,normalized_name,'Telur Ayam Ras 1 kg' cocok dengan nama kanonis 'telur ayam' (normalized)
+0101,Beras Medium (30 kg),BPS,normalized_name,'Beras Medium (30 kg)' cocok dengan nama kanonis 'beras' (normalized)
+0114,Cabai Merah Keriting (1 kg),BPS,manual,'Cabai Merah Keriting' = cabai keriting (0114); urutan kata beda dari nama kanonis sehingga tidak match otomatis
+0104,Bawang Merah (1 kg),BPS,normalized_name,'Bawang Merah (1 kg)' cocok dengan nama kanonis 'bawang merah' (normalized)
+0106,Daging Sapi Segar (1 kg),BPS,normalized_name,'Daging Sapi Segar (1 kg)' cocok dengan nama kanonis 'daging sapi' (normalized)
+0107,Telur Ayam Kampung (1 kg),BPS,normalized_name,'Telur Ayam Kampung (1 kg)' cocok dengan nama kanonis 'telur ayam' (normalized)
+0108,Minyak Goreng (1 liter),BPS,normalized_name,'Minyak Goreng (1 liter)' cocok dengan nama kanonis 'minyak goreng' (normalized)
+0109,Gula Pasir (1 kg),BPS,normalized_name,'Gula Pasir (1 kg)' cocok dengan nama kanonis 'gula pasir' (normalized)
+0107,Telur Bebek (1 kg),BPS,normalized_name,'Telur Bebek (1 kg)' cocok dengan nama kanonis 'telur ayam' (contains)
+0106,Daging Ayam (1 kg),BPS,normalized_name,'Daging Ayam (1 kg)' cocok dengan nama kanonis 'daging sapi' (normalized)
+0108,Minyak Kelapa (1 liter),BPS,normalized_name,'Minyak Kelapa (1 liter)' cocok dengan nama kanonis 'minyak goreng' (contains)
+0113,Gula Merah (1 kg),BPS,normalized_name,'Gula Merah (1 kg)' cocok dengan nama kanonis 'gula merah' (normalized)
+0102,Cabai Rawit (1 kg),BPS,normalized_name,'Cabai Rawit (1 kg)' cocok dengan nama kanonis 'cabai rawit' (normalized)
+0105,Bawang Putih (1 kg),BPS,normalized_name,'Bawang Putih (1 kg)' cocok dengan nama kanonis 'bawang putih' (normalized)
+0107,Telur Ayam Ras (1 kg),BPS,normalized_name,'Telur Ayam Ras (1 kg)' cocok dengan nama kanonis 'telur ayam' (normalized)
+0101,Beras Medium,Kemendagri,normalized_name,'Beras Medium' cocok dengan nama kanonis 'beras' (normalized)
+0103,Cabai Merah,Kemendagri,manual,'Cabai Merah' generik (tanpa kualifier rawit/keriting) mengacu ke cabai besar (0103) dalam konvensi pemantauan harga Kemendagri
+0104,Bawang Merah,Kemendagri,normalized_name,'Bawang Merah' cocok dengan nama kanonis 'bawang merah' (normalized)
+0106,Daging Sapi,Kemendagri,normalized_name,'Daging Sapi' cocok dengan nama kanonis 'daging sapi' (normalized)
+0107,Telur Ayam,Kemendagri,normalized_name,'Telur Ayam' cocok dengan nama kanonis 'telur ayam' (normalized)
+0108,Minyak Goreng,Kemendagri,normalized_name,'Minyak Goreng' cocok dengan nama kanonis 'minyak goreng' (normalized)
+0109,Gula Pasir,Kemendagri,normalized_name,'Gula Pasir' cocok dengan nama kanonis 'gula pasir' (normalized)
+0107,Telur Bebek,Kemendagri,normalized_name,'Telur Bebek' cocok dengan nama kanonis 'telur ayam' (contains)
+0106,Daging Ayam,Kemendagri,normalized_name,'Daging Ayam' cocok dengan nama kanonis 'daging sapi' (normalized)
+0108,Minyak Kelapa,Kemendagri,normalized_name,'Minyak Kelapa' cocok dengan nama kanonis 'minyak goreng' (contains)
+0113,Gula Merah,Kemendagri,normalized_name,'Gula Merah' cocok dengan nama kanonis 'gula merah' (normalized)
+0102,Cabai Rawit,Kemendagri,normalized_name,'Cabai Rawit' cocok dengan nama kanonis 'cabai rawit' (normalized)
+0105,Bawang Putih,Kemendagri,normalized_name,'Bawang Putih' cocok dengan nama kanonis 'bawang putih' (normalized)
+0107,Telur Ayam Ras,Kemendagri,normalized_name,'Telur Ayam Ras' cocok dengan nama kanonis 'telur ayam' (normalized)
+0101,Rice,HDX,manual,'Rice' -> beras (generik)
+0101,Rice (high quality),HDX,manual,'Rice (high quality)' -> beras kualitas tinggi -> kelompok beras
+0101,Rice (low quality),HDX,manual,'Rice (low quality)' -> beras kualitas rendah -> kelompok beras
+0101,Rice (medium quality),HDX,manual,'Rice (medium quality)' -> beras kualitas medium -> kelompok beras
+0102,Chili (bird's eye),HDX,manual,'Chili (bird's eye)' -> cabai rawit (bird's eye chili)
+0102,"Chili (bird's eye, green)",HDX,manual,"'Chili (bird's eye, green)' -> cabai rawit hijau -> cabai rawit"
+0102,"Chili (bird's eye, red)",HDX,manual,"'Chili (bird's eye, red)' -> cabai rawit merah -> cabai rawit"
+0103,Chili (red),HDX,manual,'Chili (red)' -> cabai merah besar generik -> cabai besar
+0103,"Chili (red, large)",HDX,manual,"'Chili (red, large)' -> cabai merah besar -> cabai besar"
+0114,"Chili (red, curly)",HDX,manual,"'Chili (red, curly)' -> cabai merah keriting -> cabai keriting"
+0104,Onions (shallot),HDX,manual,'Onions (shallot)' -> bawang merah (shallot)
+0104,"Onions (shallot, medium)",HDX,manual,"'Onions (shallot, medium)' -> bawang merah ukuran medium -> bawang merah"
+0105,Garlic,HDX,manual,'Garlic' -> bawang putih (garlic)
+0105,Garlic (medium),HDX,manual,'Garlic (medium)' -> bawang putih ukuran medium -> bawang putih
+0106,Meat (beef),HDX,manual,'Meat (beef)' -> daging sapi (beef)
+0106,"Meat (beef, first quality)",HDX,manual,"'Meat (beef, first quality)' -> daging sapi kualitas 1 -> daging sapi"
+0106,"Meat (beef, second quality)",HDX,manual,"'Meat (beef, second quality)' -> daging sapi kualitas 2 -> daging sapi"
+0111,Meat (chicken),HDX,manual,'Meat (chicken)' -> daging ayam (chicken)
+0111,"Meat (chicken, broiler)",HDX,manual,"'Meat (chicken, broiler)' -> daging ayam broiler -> daging ayam"
+0107,Eggs,HDX,manual,'Eggs' -> telur generik; dataset WFP Indonesia mayoritas melaporkan telur ayam ras -> telur ayam
+0107,Eggs (broiler),HDX,manual,'Eggs (broiler)' -> telur ayam broiler -> telur ayam
+0108,Oil (vegetable),HDX,manual,'Oil (vegetable)' -> minyak goreng nabati (vegetable oil) -> minyak goreng
+0108,"Oil (vegetable, bulk)",HDX,manual,"'Oil (vegetable, bulk)' -> minyak goreng curah -> minyak goreng"
+0108,"Oil (vegetable, packaged)",HDX,manual,"'Oil (vegetable, packaged)' -> minyak goreng kemasan -> minyak goreng"
+0109,Sugar,HDX,manual,'Sugar' -> gula pasir generik
+0109,Sugar (local),HDX,manual,'Sugar (local)' -> gula pasir lokal -> gula pasir
+0109,Sugar (premium),HDX,manual,'Sugar (premium)' -> gula pasir premium -> gula pasir

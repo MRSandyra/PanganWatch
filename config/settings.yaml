@@ -1,0 +1,87 @@
+sources:
+  pihps:
+    enabled: true
+    base_url: "https://www.bi.go.id/hargapangan"
+    rate_limit_seconds: 1.5
+    timeout_seconds: 30
+    retry_max_attempts: 5
+  
+  hdx_wfp:
+    enabled: true
+    dataset_url: "https://data.humdata.org/dataset/wfp-food-prices-for-indonesia"
+    
+  bps:
+    enabled: true
+    base_url: "https://webapi.bps.go.id/v1/api"
+    rate_limit_seconds: 2.0
+    
+  open_meteo:
+    enabled: true
+    base_url: "https://api.open-meteo.com/v1"
+    archive_url: "https://archive-api.open-meteo.com/v1/archive"
+    rate_limit_seconds: 1.0
+
+# Ingestion settings
+ingestion:
+  backfill_days: 365
+  chunk_size: 100
+  max_workers: 3
+
+# Commodities to track
+commodities:
+  - beras_premium
+  - beras_medium
+  - cabai_merah_besar
+  - cabai_merah_keriting
+  - cabai_rawit_merah
+  - bawang_merah
+  - bawang_putih
+  - daging_ayam_ras
+  - daging_sapi_kualitas_1
+  - telur_ayam_ras
+  - minyak_goreng_curah
+  - minyak_goreng_kemasan
+  - gula_pasir_lokal
+  - gula_pasir_kemasan
+
+# Weather settings
+weather:
+  poll_interval_seconds: 900
+  alert:
+    precipitation_mm_threshold: 50.0
+
+  # BMKG intensity classification (mm/day)
+  rain_intensity:
+    ringan_max: 20
+    sedang_max: 50
+    lebat_max: 100
+    sangat_lebat_max: 150
+
+# Data quality
+data_quality:
+  enabled: true
+  rules_path: "config/dq_rules.yml"
+  quarantine_enabled: true
+
+# Kafka
+kafka:
+  topics:
+    weather_raw: "weather.current.raw"
+    weather_dlq: "weather.current.dlq"
+    weather_alert: "weather.alert"
+  consumer_group: "panganwatch-weather-sink"
+  retention_days: 7
+
+# MongoDB
+mongodb:
+  ttl_days: 90
+  collections:
+    pihps_prices: "pihps_prices"
+    hdx_wfp_prices: "hdx_wfp_prices"
+    bps_inflation: "bps_inflation"
+    open_meteo_daily: "open_meteo_daily"
+    open_meteo_current: "open_meteo_current"
+    wilayah_raw: "wilayah_raw"
+
+# Timezone
+timezone: "Asia/Jakarta"

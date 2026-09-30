@@ -1,0 +1,151 @@
+kode_vervar,nama_bps,kode_kabkota_bps,kode_provinsi_bps,match_method,alasan
+1,KAB ACEH TENGAH,11.04,11,normalized_name,Nama BPS 'KAB ACEH TENGAH' cocok dengan 'Kabupaten Aceh Tengah' setelah normalisasi
+2,MEULABOH,11.05,11,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Aceh Barat
+3,KAB ACEH TAMIANG,11.16,11,normalized_name,Nama BPS 'KAB ACEH TAMIANG' cocok dengan 'Kabupaten Aceh Tamiang' setelah normalisasi
+4,KOTA BANDA ACEH,11.71,11,normalized_name,Nama BPS 'KOTA BANDA ACEH' cocok dengan 'Kota Banda Aceh' setelah normalisasi
+5,KOTA LHOKSEUMAWE,11.73,11,normalized_name,Nama BPS 'KOTA LHOKSEUMAWE' cocok dengan 'Kota Lhokseumawe' setelah normalisasi
+6,KAB LABUHANBATU,12.10,12,normalized_name,Nama BPS 'KAB LABUHANBATU' cocok dengan 'Kabupaten Labuhanbatu' setelah normalisasi
+7,KAB KARO,12.06,12,normalized_name,Nama BPS 'KAB KARO' cocok dengan 'Kabupaten Karo' setelah normalisasi
+8,KAB DELI SERDANG,12.07,12,normalized_name,Nama BPS 'KAB DELI SERDANG' cocok dengan 'Kabupaten Deli Serdang' setelah normalisasi
+9,KOTA SIBOLGA,12.73,12,normalized_name,Nama BPS 'KOTA SIBOLGA' cocok dengan 'Kota Sibolga' setelah normalisasi
+10,KOTA PEMATANGSIANTAR,12.72,12,normalized_name,Nama BPS 'KOTA PEMATANGSIANTAR' cocok dengan 'Kota Pematangsiantar' setelah normalisasi
+11,KOTA MEDAN,12.71,12,normalized_name,Nama BPS 'KOTA MEDAN' cocok dengan 'Kota Medan' setelah normalisasi
+12,KOTA PADANGSIDIMPUAN,12.77,12,normalized_name,Nama BPS 'KOTA PADANGSIDIMPUAN' cocok dengan 'Kota Padangsidimpuan' setelah normalisasi
+13,KOTA GUNUNGSITOLI,12.78,12,normalized_name,Nama BPS 'KOTA GUNUNGSITOLI' cocok dengan 'Kota Gunungsitoli' setelah normalisasi
+14,KAB DHARMASRAYA,13.10,13,normalized_name,Nama BPS 'KAB DHARMASRAYA' cocok dengan 'Kabupaten Dharmasraya' setelah normalisasi
+15,KAB PASAMAN BARAT,13.12,13,normalized_name,Nama BPS 'KAB PASAMAN BARAT' cocok dengan 'Kabupaten Pasaman Barat' setelah normalisasi
+16,KOTA PADANG,13.71,13,normalized_name,Nama BPS 'KOTA PADANG' cocok dengan 'Kota Padang' setelah normalisasi
+17,KOTA BUKITTINGGI,13.75,13,normalized_name,Nama BPS 'KOTA BUKITTINGGI' cocok dengan 'Kota Bukittinggi' setelah normalisasi
+18,TEMBILAHAN,14.04,14,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Indragiri Hilir
+19,KAB KAMPAR,14.01,14,normalized_name,Nama BPS 'KAB KAMPAR' cocok dengan 'Kabupaten Kampar' setelah normalisasi
+20,KOTA PEKANBARU,14.71,14,normalized_name,Nama BPS 'KOTA PEKANBARU' cocok dengan 'Kota Pekanbaru' setelah normalisasi
+21,KOTA DUMAI,14.72,14,normalized_name,Nama BPS 'KOTA DUMAI' cocok dengan 'Kota Dumai' setelah normalisasi
+22,KAB KERINCI,15.01,15,normalized_name,Nama BPS 'KAB KERINCI' cocok dengan 'Kabupaten Kerinci' setelah normalisasi
+23,MUARA BUNGO,15.08,15,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Bungo
+24,KOTA JAMBI,15.71,15,normalized_name,Nama BPS 'KOTA JAMBI' cocok dengan 'Kota Jambi' setelah normalisasi
+25,KAB OGAN KOMERING ILIR,16.02,16,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Ogan Komering
+26,KAB MUARA ENIM,16.03,16,normalized_name,Nama BPS 'KAB MUARA ENIM' cocok dengan 'Kabupaten Muara Enim' setelah normalisasi
+27,KOTA PALEMBANG,16.71,16,normalized_name,Nama BPS 'KOTA PALEMBANG' cocok dengan 'Kota Palembang' setelah normalisasi
+28,KOTA LUBUK LINGGAU,16.73,16,normalized_name,Nama BPS 'KOTA LUBUK LINGGAU' cocok dengan 'Kota Lubuk Linggau' setelah normalisasi
+29,KAB MUKO MUKO,17.06,17,normalized_name,Nama BPS 'KAB MUKO MUKO' cocok dengan 'Kabupaten Mukomuko' setelah normalisasi
+30,KOTA BENGKULU,17.71,17,normalized_name,Nama BPS 'KOTA BENGKULU' cocok dengan 'Kota Bengkulu' setelah normalisasi
+31,KAB LAMPUNG TIMUR,18.07,18,normalized_name,Nama BPS 'KAB LAMPUNG TIMUR' cocok dengan 'Kabupaten Lampung Timur' setelah normalisasi
+32,KAB MESUJI,18.11,18,normalized_name,Nama BPS 'KAB MESUJI' cocok dengan 'Kabupaten Mesuji' setelah normalisasi
+33,KOTA BANDAR LAMPUNG,18.71,18,normalized_name,Nama BPS 'KOTA BANDAR LAMPUNG' cocok dengan 'Kota Bandar Lampung' setelah normalisasi
+34,KOTA METRO,18.72,18,normalized_name,Nama BPS 'KOTA METRO' cocok dengan 'Kota Metro' setelah normalisasi
+35,TANJUNG PANDAN,19.02,19,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Belitung
+36,KAB BANGKA BARAT,19.05,19,normalized_name,Nama BPS 'KAB BANGKA BARAT' cocok dengan 'Kabupaten Bangka Barat' setelah normalisasi
+37,KAB BELITUNG TIMUR,19.06,19,normalized_name,Nama BPS 'KAB BELITUNG TIMUR' cocok dengan 'Kabupaten Belitung Timur' setelah normalisasi
+38,KOTA PANGKAL PINANG,19.71,19,normalized_name,Nama BPS 'KOTA PANGKAL PINANG' cocok dengan 'Kota Pangkal Pinang' setelah normalisasi
+39,KAB KARIMUN,21.02,21,normalized_name,Nama BPS 'KAB KARIMUN' cocok dengan 'Kabupaten Karimun' setelah normalisasi
+40,KOTA BATAM,21.71,21,normalized_name,Nama BPS 'KOTA BATAM' cocok dengan 'Kota Batam' setelah normalisasi
+41,KOTA TANJUNG PINANG,21.72,21,normalized_name,Nama BPS 'KOTA TANJUNG PINANG' cocok dengan 'Kota Tanjung Pinang' setelah normalisasi
+42,KOTA JAKARTA,,31,manual,IHK Jakarta mencakup beberapa kota administrasi; dipetakan ke provinsi DKI Jakarta saja
+43,KAB BANDUNG,32.04,32,normalized_name,Nama BPS 'KAB BANDUNG' cocok dengan 'Kabupaten Bandung' setelah normalisasi
+44,KAB MAJALENGKA,32.10,32,normalized_name,Nama BPS 'KAB MAJALENGKA' cocok dengan 'Kabupaten Majalengka' setelah normalisasi
+45,KAB SUBANG,32.13,32,normalized_name,Nama BPS 'KAB SUBANG' cocok dengan 'Kabupaten Subang' setelah normalisasi
+46,KOTA BOGOR,32.71,32,normalized_name,Nama BPS 'KOTA BOGOR' cocok dengan 'Kota Bogor' setelah normalisasi
+47,KOTA SUKABUMI,32.72,32,normalized_name,Nama BPS 'KOTA SUKABUMI' cocok dengan 'Kota Sukabumi' setelah normalisasi
+48,KOTA BANDUNG,32.73,32,normalized_name,Nama BPS 'KOTA BANDUNG' cocok dengan 'Kota Bandung' setelah normalisasi
+49,KOTA CIREBON,32.74,32,normalized_name,Nama BPS 'KOTA CIREBON' cocok dengan 'Kota Cirebon' setelah normalisasi
+50,KOTA BEKASI,32.75,32,normalized_name,Nama BPS 'KOTA BEKASI' cocok dengan 'Kota Bekasi' setelah normalisasi
+51,KOTA DEPOK,32.76,32,normalized_name,Nama BPS 'KOTA DEPOK' cocok dengan 'Kota Depok' setelah normalisasi
+52,KOTA TASIKMALAYA,32.78,32,normalized_name,Nama BPS 'KOTA TASIKMALAYA' cocok dengan 'Kota Tasikmalaya' setelah normalisasi
+53,CILACAP,33.01,33,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Cilacap
+54,PURWOKERTO,33.02,33,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Banyumas
+55,KAB WONOSOBO,33.07,33,normalized_name,Nama BPS 'KAB WONOSOBO' cocok dengan 'Kabupaten Wonosobo' setelah normalisasi
+56,KAB WONOGIRI,33.12,33,normalized_name,Nama BPS 'KAB WONOGIRI' cocok dengan 'Kabupaten Wonogiri' setelah normalisasi
+57,KAB REMBANG,33.17,33,normalized_name,Nama BPS 'KAB REMBANG' cocok dengan 'Kabupaten Rembang' setelah normalisasi
+58,KUDUS,33.19,33,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Kudus
+59,KOTA SURAKARTA,33.72,33,normalized_name,Nama BPS 'KOTA SURAKARTA' cocok dengan 'Kota Surakarta' setelah normalisasi
+60,KOTA SEMARANG,33.74,33,normalized_name,Nama BPS 'KOTA SEMARANG' cocok dengan 'Kota Semarang' setelah normalisasi
+61,KOTA TEGAL,33.76,33,normalized_name,Nama BPS 'KOTA TEGAL' cocok dengan 'Kota Tegal' setelah normalisasi
+62,KAB GUNUNGKIDUL,34.03,34,normalized_name,Nama BPS 'KAB GUNUNGKIDUL' cocok dengan 'Kabupaten Gunungkidul' setelah normalisasi
+63,KOTA YOGYAKARTA,34.71,34,normalized_name,Nama BPS 'KOTA YOGYAKARTA' cocok dengan 'Kota Yogyakarta' setelah normalisasi
+64,KAB TULUNGAGUNG,35.04,35,normalized_name,Nama BPS 'KAB TULUNGAGUNG' cocok dengan 'Kabupaten Tulungagung' setelah normalisasi
+65,JEMBER,35.09,35,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Jember
+66,BANYUWANGI,35.10,35,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Banyuwangi
+67,KAB BOJONEGORO,35.22,35,normalized_name,Nama BPS 'KAB BOJONEGORO' cocok dengan 'Kabupaten Bojonegoro' setelah normalisasi
+68,KAB GRESIK,35.25,35,normalized_name,Nama BPS 'KAB GRESIK' cocok dengan 'Kabupaten Gresik' setelah normalisasi
+69,SUMENEP,35.29,35,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Sumenep
+70,KOTA KEDIRI,35.71,35,normalized_name,Nama BPS 'KOTA KEDIRI' cocok dengan 'Kota Kediri' setelah normalisasi
+71,KOTA MALANG,35.73,35,normalized_name,Nama BPS 'KOTA MALANG' cocok dengan 'Kota Malang' setelah normalisasi
+72,KOTA PROBOLINGGO,35.74,35,normalized_name,Nama BPS 'KOTA PROBOLINGGO' cocok dengan 'Kota Probolinggo' setelah normalisasi
+73,KOTA MADIUN,35.77,35,normalized_name,Nama BPS 'KOTA MADIUN' cocok dengan 'Kota Madiun' setelah normalisasi
+74,KOTA SURABAYA,35.78,35,normalized_name,Nama BPS 'KOTA SURABAYA' cocok dengan 'Kota Surabaya' setelah normalisasi
+75,KAB PANDEGLANG,36.01,36,normalized_name,Nama BPS 'KAB PANDEGLANG' cocok dengan 'Kabupaten Pandeglang' setelah normalisasi
+76,KAB LEBAK,36.02,36,normalized_name,Nama BPS 'KAB LEBAK' cocok dengan 'Kabupaten Lebak' setelah normalisasi
+77,KOTA TANGERANG,36.71,36,normalized_name,Nama BPS 'KOTA TANGERANG' cocok dengan 'Kota Tangerang' setelah normalisasi
+78,KOTA CILEGON,36.72,36,normalized_name,Nama BPS 'KOTA CILEGON' cocok dengan 'Kota Cilegon' setelah normalisasi
+79,KOTA SERANG,36.73,36,normalized_name,Nama BPS 'KOTA SERANG' cocok dengan 'Kota Serang' setelah normalisasi
+80,KAB TABANAN,51.02,51,normalized_name,Nama BPS 'KAB TABANAN' cocok dengan 'Kabupaten Tabanan' setelah normalisasi
+81,KAB BADUNG,51.03,51,normalized_name,Nama BPS 'KAB BADUNG' cocok dengan 'Kabupaten Badung' setelah normalisasi
+82,SINGARAJA,51.08,51,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Buleleng
+83,KOTA DENPASAR,51.71,51,normalized_name,Nama BPS 'KOTA DENPASAR' cocok dengan 'Kota Denpasar' setelah normalisasi
+84,KAB SUMBAWA,52.04,52,normalized_name,Nama BPS 'KAB SUMBAWA' cocok dengan 'Kabupaten Sumbawa' setelah normalisasi
+85,KOTA MATARAM,52.71,52,normalized_name,Nama BPS 'KOTA MATARAM' cocok dengan 'Kota Mataram' setelah normalisasi
+86,KOTA BIMA,52.72,52,normalized_name,Nama BPS 'KOTA BIMA' cocok dengan 'Kota Bima' setelah normalisasi
+87,WAINGAPU,53.11,53,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Sumba Timur
+88,KAB TIMOR TENGAH SELATAN,53.02,53,normalized_name,Nama BPS 'KAB TIMOR TENGAH SELATAN' cocok dengan 'Kabupaten Timor Tengah Selatan' setelah normalisasi
+89,MAUMERE,53.07,53,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Sikka
+90,KAB NGADA,53.09,53,normalized_name,Nama BPS 'KAB NGADA' cocok dengan 'Kabupaten Ngada' setelah normalisasi
+91,KOTA KUPANG,53.71,53,normalized_name,Nama BPS 'KOTA KUPANG' cocok dengan 'Kota Kupang' setelah normalisasi
+92,KAB KETAPANG,61.04,61,normalized_name,Nama BPS 'KAB KETAPANG' cocok dengan 'Kabupaten Ketapang' setelah normalisasi
+93,SINTANG,61.05,61,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Sintang
+94,KAB KAYONG UTARA,61.11,61,normalized_name,Nama BPS 'KAB KAYONG UTARA' cocok dengan 'Kabupaten Kayong Utara' setelah normalisasi
+95,KOTA PONTIANAK,61.71,61,normalized_name,Nama BPS 'KOTA PONTIANAK' cocok dengan 'Kota Pontianak' setelah normalisasi
+96,KOTA SINGKAWANG,61.72,61,normalized_name,Nama BPS 'KOTA SINGKAWANG' cocok dengan 'Kota Singkawang' setelah normalisasi
+97,SAMPIT,62.02,62,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Kotawaringin Timur
+98,KAB KAPUAS,62.03,62,normalized_name,Nama BPS 'KAB KAPUAS' cocok dengan 'Kabupaten Kapuas' setelah normalisasi
+99,KAB SUKAMARA,62.08,62,normalized_name,Nama BPS 'KAB SUKAMARA' cocok dengan 'Kabupaten Sukamara' setelah normalisasi
+100,KOTA PALANGKARAYA,62.71,62,normalized_name,Nama BPS 'KOTA PALANGKARAYA' cocok dengan 'Kota Palangkaraya' setelah normalisasi
+101,KAB TANAH LAUT,63.01,63,normalized_name,Nama BPS 'KAB TANAH LAUT' cocok dengan 'Kabupaten Tanah Laut' setelah normalisasi
+102,KOTABARU,63.02,63,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Kotabaru
+103,KAB HULU SUNGAI TENGAH,63.07,63,normalized_name,Nama BPS 'KAB HULU SUNGAI TENGAH' cocok dengan 'Kabupaten Hulu Sungai Tengah' setelah normalisasi
+104,TANJUNG,63.09,63,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Tabalong
+105,KOTA BANJARMASIN,63.71,63,normalized_name,Nama BPS 'KOTA BANJARMASIN' cocok dengan 'Kota Banjarmasin' setelah normalisasi
+106,KAB BERAU,64.03,64,normalized_name,Nama BPS 'KAB BERAU' cocok dengan 'Kabupaten Berau' setelah normalisasi
+107,KAB PENAJAM PASER UTARA,64.09,64,normalized_name,Nama BPS 'KAB PENAJAM PASER UTARA' cocok dengan 'Kabupaten Penajam Paser Utara' setelah normalisasi
+108,KOTA BALIKPAPAN,64.71,64,normalized_name,Nama BPS 'KOTA BALIKPAPAN' cocok dengan 'Kota Balikpapan' setelah normalisasi
+109,KOTA SAMARINDA,64.72,64,normalized_name,Nama BPS 'KOTA SAMARINDA' cocok dengan 'Kota Samarinda' setelah normalisasi
+110,TANJUNG SELOR,65.01,65,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Bulungan
+111,KAB NUNUKAN,65.03,65,normalized_name,Nama BPS 'KAB NUNUKAN' cocok dengan 'Kabupaten Nunukan' setelah normalisasi
+112,KOTA TARAKAN,65.71,65,normalized_name,Nama BPS 'KOTA TARAKAN' cocok dengan 'Kota Tarakan' setelah normalisasi
+113,KAB MINAHASA SELATAN,71.05,71,normalized_name,Nama BPS 'KAB MINAHASA SELATAN' cocok dengan 'Kabupaten Minahasa Selatan' setelah normalisasi
+114,KAB MINAHASA UTARA,71.06,71,normalized_name,Nama BPS 'KAB MINAHASA UTARA' cocok dengan 'Kabupaten Minahasa Utara' setelah normalisasi
+115,KOTA MANADO,71.71,71,normalized_name,Nama BPS 'KOTA MANADO' cocok dengan 'Kota Manado' setelah normalisasi
+116,KOTA KOTAMOBAGU,71.74,71,normalized_name,Nama BPS 'KOTA KOTAMOBAGU' cocok dengan 'Kota Kotamobagu' setelah normalisasi
+117,LUWUK,72.01,72,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Banggai
+118,KAB MOROWALI,72.06,72,normalized_name,Nama BPS 'KAB MOROWALI' cocok dengan 'Kabupaten Morowali' setelah normalisasi
+119,KAB TOLI TOLI,72.04,72,normalized_name,Nama BPS 'KAB TOLI TOLI' cocok dengan 'Kabupaten Toli-Toli' setelah normalisasi
+120,KOTA PALU,72.71,72,normalized_name,Nama BPS 'KOTA PALU' cocok dengan 'Kota Palu' setelah normalisasi
+121,BULUKUMBA,73.02,73,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Bulukumba
+122,WATAMPONE,73.08,73,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Bone
+123,KAB WAJO,73.13,73,normalized_name,Nama BPS 'KAB WAJO' cocok dengan 'Kabupaten Wajo' setelah normalisasi
+124,KAB SIDENRENG RAPPANG,73.14,73,normalized_name,Nama BPS 'KAB SIDENRENG RAPPANG' cocok dengan 'Kabupaten Sidenreng Rappang' setelah normalisasi
+125,KAB LUWU TIMUR,73.24,73,normalized_name,Nama BPS 'KAB LUWU TIMUR' cocok dengan 'Kabupaten Luwu Timur' setelah normalisasi
+126,KOTA MAKASSAR,73.71,73,normalized_name,Nama BPS 'KOTA MAKASSAR' cocok dengan 'Kota Makassar' setelah normalisasi
+127,KOTA PARE PARE,73.72,73,normalized_name,Nama BPS 'KOTA PARE PARE' cocok dengan 'Kota Parepare' setelah normalisasi
+128,KOTA PALOPO,73.73,73,normalized_name,Nama BPS 'KOTA PALOPO' cocok dengan 'Kota Palopo' setelah normalisasi
+129,KAB KONAWE,74.02,74,normalized_name,Nama BPS 'KAB KONAWE' cocok dengan 'Kabupaten Konawe' setelah normalisasi
+130,KAB KOLAKA,74.01,74,normalized_name,Nama BPS 'KAB KOLAKA' cocok dengan 'Kabupaten Kolaka' setelah normalisasi
+131,KOTA KENDARI,74.71,74,normalized_name,Nama BPS 'KOTA KENDARI' cocok dengan 'Kota Kendari' setelah normalisasi
+132,KOTA BAU BAU,74.72,74,normalized_name,Nama BPS 'KOTA BAU BAU' cocok dengan 'Kota Bau Bau' setelah normalisasi
+133,KAB GORONTALO,75.01,75,normalized_name,Nama BPS 'KAB GORONTALO' cocok dengan 'Kabupaten Gorontalo' setelah normalisasi
+134,KOTA GORONTALO,75.71,75,normalized_name,Nama BPS 'KOTA GORONTALO' cocok dengan 'Kota Gorontalo' setelah normalisasi
+135,KAB MAJENE,76.05,76,normalized_name,Nama BPS 'KAB MAJENE' cocok dengan 'Kabupaten Majene' setelah normalisasi
+136,MAMUJU,76.02,76,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Mamuju
+137,KAB MALUKU TENGAH,81.01,81,normalized_name,Nama BPS 'KAB MALUKU TENGAH' cocok dengan 'Kabupaten Maluku Tengah' setelah normalisasi
+138,KOTA AMBON,81.71,81,normalized_name,Nama BPS 'KOTA AMBON' cocok dengan 'Kota Ambon' setelah normalisasi
+139,KOTA TUAL,81.72,81,normalized_name,Nama BPS 'KOTA TUAL' cocok dengan 'Kota Tual' setelah normalisasi
+140,KAB HALMAHERA TENGAH,82.02,82,normalized_name,Nama BPS 'KAB HALMAHERA TENGAH' cocok dengan 'Kabupaten Halmahera Tengah' setelah normalisasi
+141,KOTA TERNATE,82.71,82,normalized_name,Nama BPS 'KOTA TERNATE' cocok dengan 'Kota Ternate' setelah normalisasi
+142,MANOKWARI,92.02,92,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Manokwari
+143,KAB SORONG,96.01,96,normalized_name,Nama BPS 'KAB SORONG' cocok dengan 'Kabupaten Sorong' setelah normalisasi
+144,KAB SORONG SELATAN,96.02,96,normalized_name,Nama BPS 'KAB SORONG SELATAN' cocok dengan 'Kabupaten Sorong Selatan' setelah normalisasi
+145,KOTA SORONG,96.71,96,normalized_name,Nama BPS 'KOTA SORONG' cocok dengan 'Kota Sorong' setelah normalisasi
+146,KOTA JAYAPURA,91.71,91,normalized_name,Nama BPS 'KOTA JAYAPURA' cocok dengan 'Kota Jayapura' setelah normalisasi
+147,MERAUKE,93.01,93,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Merauke
+148,TIMIKA,94.04,94,manual,Nama kota IHK BPS bukan nama administrasi; dipetakan ke Kabupaten Mimika
+149,KAB NABIRE,94.01,94,normalized_name,Nama BPS 'KAB NABIRE' cocok dengan 'Kabupaten Nabire' setelah normalisasi
+150,KAB JAYAWIJAYA,95.01,95,normalized_name,Nama BPS 'KAB JAYAWIJAYA' cocok dengan 'Kabupaten Jayawijaya' setelah normalisasi

@@ -1,0 +1,225 @@
+version: 2
+
+seeds:
+  - name: ref_provinsi
+    description: "38 Indonesian provinces — BPS/Kemendagri code, name, capital, coordinates"
+    config:
+      column_types:
+        kode_bps: varchar(2)
+        kode_kemendagri: varchar(2)
+        nama_provinsi: varchar(64)
+        ibu_kota: varchar(64)
+        lat: double precision
+        lon: double precision
+        source: varchar(200)
+    tests:
+      - unique:
+          column_name: kode_bps
+      - unique:
+          column_name: kode_kemendagri
+      - not_null:
+          column_name: kode_bps
+      - not_null:
+          column_name: kode_kemendagri
+      - not_null:
+          column_name: nama_provinsi
+      - not_null:
+          column_name: ibu_kota
+      - not_null:
+          column_name: lat
+      - not_null:
+          column_name: lon
+      - bbox_indonesia:
+          arguments:
+            lat_column: lat
+            lon_column: lon
+
+  - name: ref_kabkota
+    description: "513 Indonesian kab/kota — BPS/Kemendagri code (4-digit prov.kab), name, province code"
+    config:
+      column_types:
+        kode_bps: varchar(6)
+        kode_kemendagri: varchar(6)
+        kode_provinsi_bps: varchar(2)
+        nama: varchar(100)
+    tests:
+      - unique:
+          column_name: kode_bps
+      - unique:
+          column_name: kode_kemendagri
+      - not_null:
+          column_name: kode_bps
+      - not_null:
+          column_name: kode_kemendagri
+      - not_null:
+          column_name: kode_provinsi_bps
+      - not_null:
+          column_name: nama
+      - prov_kab_unique:
+          prov_column: kode_provinsi_bps
+          kab_column: kode_bps
+
+  - name: ref_komoditas
+    description: "14 Indonesian reference commodities — code, canonical name, group, unit, HET"
+    config:
+      column_types:
+        komoditas_id: varchar(4)
+        nama_kanonis: varchar(50)
+        kelompok: varchar(20)
+        satuan: varchar(10)
+        het: numeric(10,2)
+    tests:
+      - unique:
+          column_name: komoditas_id
+      - unique:
+          column_name: nama_kanonis
+      - not_null:
+          column_name: komoditas_id
+      - not_null:
+          column_name: nama_kanonis
+      - not_null:
+          column_name: kelompok
+      - not_null:
+          column_name: satuan
+      - accepted_values:
+          column_name: kelompok
+          values: [beras, cabai, bawang, daging, gula, minyak, telur]
+
+  - name: ref_komoditas_alias
+    description: "Maps source names to komoditas_id"
+    config:
+      column_types:
+        komoditas_id: varchar(4)
+        nama_sumber: varchar(100)
+        sumber: varchar(20)
+        match_method: varchar(20)
+        alasan: varchar(200)
+    tests:
+      - unique:
+          column_name: nama_sumber
+      - not_null:
+          column_name: komoditas_id
+      - not_null:
+          column_name: nama_sumber
+      - not_null:
+          column_name: sumber
+      - not_null:
+          column_name: match_method
+      - not_null:
+          column_name: alasan
+      - accepted_values:
+          column_name: sumber
+          values: [PIHPS, HDX, BPS, Kemendagri]
+      - accepted_values:
+          column_name: match_method
+          values: [exact_name, normalized_name, manual]
+      - relationships:
+          column_name: komoditas_id
+          to: ref('ref_komoditas')
+          field: komoditas_id
+
+  - name: ref_provinsi_alias
+    description: "Maps province names as written in the source data (e.g. HDX WFP admin1) to ref_provinsi.kode_bps (F3a)"
+    config:
+      column_types:
+        nama_sumber: varchar(100)
+        sumber: varchar(20)
+        kode_bps: varchar(2)
+        match_method: varchar(20)
+        alasan: varchar(300)
+    tests:
+      - unique:
+          column_name: nama_sumber
+      - not_null:
+          column_name: nama_sumber
+      - not_null:
+          column_name: sumber
+      - not_null:
+          column_name: kode_bps
+      - not_null:
+          column_name: match_method
+      - not_null:
+          column_name: alasan
+      - accepted_values:
+          column_name: sumber
+          values: [PIHPS, HDX, BPS, Kemendagri]
+      - accepted_values:
+          column_name: match_method
+          values: [exact_name, normalized_name, manual]
+      - relationships:
+          column_name: kode_bps
+          to: ref('ref_provinsi')
+          field: kode_bps
+
+  - name: governance_glossary
+    description: "Governance term glossary (at least 15 terms) for F8a"
+    config:
+      column_types:
+        term: varchar(100)
+        definition: text
+        domain: varchar(50)
+        owner: varchar(50)
+        related_columns: varchar(200)
+        source: varchar(50)
+    tests:
+      - not_null:
+          column_name: term
+      - not_null:
+          column_name: definition
+      - not_null:
+          column_name: domain
+      - not_null:
+          column_name: owner
+      - unique:
+          column_name: term
+
+  - name: governance_raci
+    description: "RACI matrix for dataset x role (Data Owner, Data Steward, Data Custodian, Consumer) for F8a"
+    config:
+      column_types:
+        dataset: varchar(100)
+        role: varchar(50)
+        raci_value: varchar(1)
+        owner: varchar(200)
+    tests:
+      - not_null:
+          column_name: dataset
+      - not_null:
+          column_name: role
+      - not_null:
+          column_name: raci_value
+      - accepted_values:
+          column_name: raci_value
+          values: ['R', 'A', 'C', 'I']
+  - name: ref_ihk_kota
+    description: "Maps the 150 BPS IHK cities (var 2245) to kab/kota and province (F3b). Built by scripts/build_ref_ihk_kota.py from ref_kabkota; manual mappings and unmapped cities are reported in docs/governance/ihk_mapping_report.md."
+    config:
+      column_types:
+        kode_vervar: integer
+        nama_bps: varchar(100)
+        kode_kabkota_bps: varchar(6)
+        kode_provinsi_bps: varchar(2)
+        match_method: varchar(20)
+        alasan: varchar(300)
+    tests:
+      - unique:
+          column_name: kode_vervar
+      - unique:
+          column_name: nama_bps
+      - not_null:
+          column_name: kode_vervar
+      - not_null:
+          column_name: nama_bps
+      - not_null:
+          column_name: alasan
+      - accepted_values:
+          column_name: match_method
+          values: ['exact_code', 'exact_name', 'normalized_name', 'manual']
+      - relationships:
+          column_name: kode_provinsi_bps
+          to: ref('ref_provinsi')
+          field: kode_bps
+      - relationships:
+          column_name: kode_kabkota_bps
+          to: ref('ref_kabkota')
+          field: kode_bps

@@ -1,0 +1,13 @@
+date,admin1,admin2,market,market_id,latitude,longitude,category,commodity,commodity_id,unit,priceflag,pricetype,currency,price,usdprice
+2026-06-15,ACEH,ACEH BARAT,Pasar Lapang,2821,4.17,96.14,cereals and tubers,Rice (medium quality),753,KG,actual,Retail,IDR,15500,0.88
+2026-06-15,ACEH,ACEH BARAT,Pasar Ujong Baro,2822,4.15,96.13,cereals and tubers,Rice (medium quality),753,KG,actual,Retail,IDR,15600,0.88
+2026-06-15,DKI JAKARTA,KOTA JAKARTA SELATAN,Pasar Minggu (Kota Jakarta Selatan),2843,-6.28,106.84,vegetables and fruits,"Onions (shallot, medium)",783,KG,actual,Retail,IDR,62500,3.53
+2026-06-15,DKI JAKARTA,KOTA JAKARTA TIMUR,Pasar Jatinegara,2844,-6.22,106.86,vegetables and fruits,"Onions (shallot, medium)",783,KG,actual,Retail,IDR,56650,3.2
+2016-07-15,JAWA BARAT,KOTA BANDUNG,Pasar Kiara Condong,2855,-6.93,107.64,vegetables and fruits,Chili (bird's eye),604,KG,aggregate,Retail,IDR,40000,3.06
+2016-07-15,JAWA BARAT,KOTA BANDUNG,Pasar Kosambi,2856,-6.92,107.62,vegetables and fruits,Chili (bird's eye),604,KG,aggregate,Retail,IDR,48785.71,3.73
+2007-01-15,,,National Average,974,,,cereals and tubers,Rice,52,KG,actual,Retail,IDR,5941.98,0.65
+2007-01-15,,,National Average,974,,,cereals and tubers,Wheat flour,58,KG,actual,Retail,IDR,4328.26,0.48
+2007-01-15,,,National Average,974,,,non-food,Fuel (kerosene),283,L,actual,Retail,IDR,2874,0.32
+2007-02-15,,,National Average,974,,,non-food,Fuel (kerosene),283,L,actual,Retail,IDR,2871,0.32
+2020-01-15,BALI,BULELENG,Pasar Anyar (Kab. Buleleng),2827,-8.11,115.09,miscellaneous food,Sugar (local),754,KG,aggregate,Retail,IDR,13866.67,1.02
+2020-01-15,BALI,BULELENG,Pasar Banyuasri,2828,-8.11,115.08,miscellaneous food,Sugar (local),754,KG,aggregate,Retail,IDR,13775,1.01

@@ -1,0 +1,29 @@
+[
+  {
+    "tanggal": "2026-09-15",
+    "provinsi": "Jawa Timur",
+    "kabupaten": "Surabaya",
+    "komoditas": "beras",
+    "pasar": "Pasar Tenggilis",
+    "harga": 13500,
+    "satuan": "rupiah/kg"
+  },
+  {
+    "tanggal": "2026-09-15",
+    "provinsi": "Jawa Tengah",
+    "kabupaten": "Semarang",
+    "komoditas": "cabai rawit",
+    "pasar": "Pasar Johar",
+    "harga": 25000,
+    "satuan": "rupiah/kg"
+  },
+  {
+    "tanggal": "2026-09-15",
+    "provinsi": "Sumatera Utara",
+    "kabupaten": "Medan",
+    "komoditas": "daging sapi",
+    "pasar": "Pasar Medan Baru",
+    "harga": 120000,
+    "satuan": "rupiah/kg"
+  }
+]

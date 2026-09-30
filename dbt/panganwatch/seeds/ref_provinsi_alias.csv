@@ -1,0 +1,35 @@
+nama_sumber,sumber,kode_bps,match_method,alasan
+ACEH,HDX,11,normalized_name,'ACEH' cocok dengan nama_provinsi setelah normalisasi
+BALI,HDX,51,normalized_name,'BALI' cocok dengan nama_provinsi setelah normalisasi
+BANTEN,HDX,36,normalized_name,'BANTEN' cocok dengan nama_provinsi setelah normalisasi
+BENGKULU,HDX,17,normalized_name,'BENGKULU' cocok dengan nama_provinsi setelah normalisasi
+DAERAH ISTIMEWA YOGYAKARTA,HDX,34,normalized_name,'DAERAH ISTIMEWA YOGYAKARTA' cocok dengan nama_provinsi setelah normalisasi
+DKI JAKARTA,HDX,31,manual,'DKI Jakarta' adalah singkatan umum resmi untuk provinsi 'Daerah Khusus Ibukota Jakarta' (kode BPS 31); tidak cocok dengan normalisasi string biasa karena kata-katanya berbeda.
+GORONTALO,HDX,75,normalized_name,'GORONTALO' cocok dengan nama_provinsi setelah normalisasi
+JAMBI,HDX,15,normalized_name,'JAMBI' cocok dengan nama_provinsi setelah normalisasi
+JAWA BARAT,HDX,32,normalized_name,'JAWA BARAT' cocok dengan nama_provinsi setelah normalisasi
+JAWA TENGAH,HDX,33,normalized_name,'JAWA TENGAH' cocok dengan nama_provinsi setelah normalisasi
+JAWA TIMUR,HDX,35,normalized_name,'JAWA TIMUR' cocok dengan nama_provinsi setelah normalisasi
+KALIMANTAN BARAT,HDX,61,normalized_name,'KALIMANTAN BARAT' cocok dengan nama_provinsi setelah normalisasi
+KALIMANTAN SELATAN,HDX,63,normalized_name,'KALIMANTAN SELATAN' cocok dengan nama_provinsi setelah normalisasi
+KALIMANTAN TENGAH,HDX,62,normalized_name,'KALIMANTAN TENGAH' cocok dengan nama_provinsi setelah normalisasi
+KALIMANTAN TIMUR,HDX,64,normalized_name,'KALIMANTAN TIMUR' cocok dengan nama_provinsi setelah normalisasi
+KALIMANTAN UTARA,HDX,65,normalized_name,'KALIMANTAN UTARA' cocok dengan nama_provinsi setelah normalisasi
+KEPULAUAN BANGKA BELITUNG,HDX,19,normalized_name,'KEPULAUAN BANGKA BELITUNG' cocok dengan nama_provinsi setelah normalisasi
+KEPULAUAN RIAU,HDX,21,normalized_name,'KEPULAUAN RIAU' cocok dengan nama_provinsi setelah normalisasi
+LAMPUNG,HDX,18,normalized_name,'LAMPUNG' cocok dengan nama_provinsi setelah normalisasi
+MALUKU,HDX,81,normalized_name,'MALUKU' cocok dengan nama_provinsi setelah normalisasi
+MALUKU UTARA,HDX,82,normalized_name,'MALUKU UTARA' cocok dengan nama_provinsi setelah normalisasi
+NUSA TENGGARA BARAT,HDX,52,normalized_name,'NUSA TENGGARA BARAT' cocok dengan nama_provinsi setelah normalisasi
+NUSA TENGGARA TIMUR,HDX,53,normalized_name,'NUSA TENGGARA TIMUR' cocok dengan nama_provinsi setelah normalisasi
+PAPUA,HDX,91,normalized_name,'PAPUA' cocok dengan nama_provinsi setelah normalisasi
+PAPUA BARAT,HDX,92,normalized_name,'PAPUA BARAT' cocok dengan nama_provinsi setelah normalisasi
+RIAU,HDX,14,normalized_name,'RIAU' cocok dengan nama_provinsi setelah normalisasi
+SULAWESI BARAT,HDX,76,normalized_name,'SULAWESI BARAT' cocok dengan nama_provinsi setelah normalisasi
+SULAWESI SELATAN,HDX,73,normalized_name,'SULAWESI SELATAN' cocok dengan nama_provinsi setelah normalisasi
+SULAWESI TENGAH,HDX,72,normalized_name,'SULAWESI TENGAH' cocok dengan nama_provinsi setelah normalisasi
+SULAWESI TENGGARA,HDX,74,normalized_name,'SULAWESI TENGGARA' cocok dengan nama_provinsi setelah normalisasi
+SULAWESI UTARA,HDX,71,normalized_name,'SULAWESI UTARA' cocok dengan nama_provinsi setelah normalisasi
+SUMATERA BARAT,HDX,13,normalized_name,'SUMATERA BARAT' cocok dengan nama_provinsi setelah normalisasi
+SUMATERA SELATAN,HDX,16,normalized_name,'SUMATERA SELATAN' cocok dengan nama_provinsi setelah normalisasi
+SUMATERA UTARA,HDX,12,normalized_name,'SUMATERA UTARA' cocok dengan nama_provinsi setelah normalisasi

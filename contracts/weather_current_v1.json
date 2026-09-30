@@ -1,0 +1,251 @@
+{
+  "description": "Model for current weather data sent to Kafka topic `weather.current.raw`.\n\nFields align with the specification in Appendix C of the\nproject documentation. The model is used both for validation and for\ngenerating JSON Schema documentation.",
+  "properties": {
+    "event_id": {
+      "description": "UUID string, required, unique",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "description": "must be \"1.0\"",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "kode_provinsi_bps": {
+      "description": "province code, required, must exist in ref.ref_provinsi",
+      "title": "Kode Provinsi Bps",
+      "type": "string"
+    },
+    "observed_at": {
+      "description": "datetime with timezone, required, not more than 1 hour in the future",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "temperature_c": {
+      "anyOf": [
+        {
+          "maximum": 50,
+          "minimum": -10,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "temperature in Celsius, range -10 to 50",
+      "title": "Temperature C"
+    },
+    "precipitation_mm": {
+      "anyOf": [
+        {
+          "maximum": 500,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "precipitation in mm, range 0-500",
+      "title": "Precipitation Mm"
+    },
+    "humidity_pct": {
+      "anyOf": [
+        {
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "relative humidity percentage, 0-100",
+      "title": "Humidity Pct"
+    },
+    "wind_speed_kph": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "wind speed in kilometers per hour, non-negative",
+      "title": "Wind Speed Kph"
+    },
+    "wind_direction_deg": {
+      "anyOf": [
+        {
+          "maximum": 360,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "wind direction degrees, 0-360",
+      "title": "Wind Direction Deg"
+    },
+    "cloud_cover_pct": {
+      "anyOf": [
+        {
+          "maximum": 100,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "cloud cover percentage, 0-100",
+      "title": "Cloud Cover Pct"
+    },
+    "visibility_km": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "visibility in kilometers, positive",
+      "title": "Visibility Km"
+    },
+    "pressure_hpa": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "atmospheric pressure in hectopascals, reasonable range",
+      "title": "Pressure Hpa"
+    },
+    "uv_index": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "UV index, 0-11+",
+      "title": "Uv Index"
+    },
+    "sunrise_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "sunrise time with timezone",
+      "title": "Sunrise At"
+    },
+    "sunset_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "sunset time with timezone",
+      "title": "Sunset At"
+    },
+    "moon_phase": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "moon phase fraction, 0-1",
+      "title": "Moon Phase"
+    },
+    "rain_mm": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Appendix C: liquid rain only (subset of precipitation_mm), mm, non-negative",
+      "title": "Rain Mm"
+    },
+    "weather_code": {
+      "anyOf": [
+        {
+          "maximum": 99,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Appendix C: WMO weather interpretation code, 0-99",
+      "title": "Weather Code"
+    },
+    "source": {
+      "const": "open-meteo",
+      "default": "open-meteo",
+      "description": "Appendix C: data source, must be 'open-meteo'",
+      "title": "Source",
+      "type": "string"
+    },
+    "fetched_at": {
+      "description": "Appendix C: datetime with timezone when the producer fetched this reading, required",
+      "title": "Fetched At",
+      "type": "string"
+    },
+    "producer_id": {
+      "description": "Appendix C: identifier of the producer instance that sent this message, required",
+      "title": "Producer Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "schema_version",
+    "kode_provinsi_bps",
+    "observed_at",
+    "fetched_at",
+    "producer_id"
+  ],
+  "title": "WeatherCurrentV1",
+  "type": "object"
+}

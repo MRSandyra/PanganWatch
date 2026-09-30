@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: silver
+    schema: silver
+    tables:
+      - name: harga_pangan
+        description: "Food prices per date x province x commodity x market type x source (F3a)."
+        loaded_at_field: loaded_at
+        freshness:
+          warn_after: {count: 45, period: day}
+          error_after: {count: 90, period: day}
+      - name: cuaca_harian
+        description: "Daily historical weather per province (F3c, Open-Meteo Archive)."
+      - name: inflasi_kota
+        description: "Monthly IHK and inflation per BPS IHK city (F3b, BPS WebAPI var 2245/2249, DEC-039)."
+        loaded_at_field: loaded_at
+        freshness:
+          warn_after: {count: 45, period: day}
+          error_after: {count: 120, period: day}
+
+  - name: governance
+    schema: governance
+    tables:
+      - name: pipeline_runs
+        description: "Execution log for every ingestion job (F1/F3)."
+      - name: dq_results
+        description: "Aggregated results per DQ rule per run (F4)."
+      - name: quarantine
+        description: "Records that failed an error-severity DQ rule (F4)."

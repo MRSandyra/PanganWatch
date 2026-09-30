@@ -1,0 +1,197 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: panganwatch-postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 1g
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - type: bind
+        source: ./docker/postgres
+        target: /docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    ports:
+      - "5433:5432"
+
+  mongo:
+    image: mongo:7
+    container_name: panganwatch-mongo
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 1g
+    command: ["--wiredTigerCacheSizeGB", "0.25"]
+    volumes:
+      - mongo_data:/data/db
+    env_file:
+      - .env
+    ports:
+      - "27017:27017"
+
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: panganwatch-kafka
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+    mem_limit: 1g
+    environment:
+      KAFKA_HEAP_OPTS: "-Xmx512m -Xms512m"
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092,CONTROLLER://:9093"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+
+  kafka-init:
+    image: apache/kafka:3.7.0
+    container_name: panganwatch-kafka-init
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create
+        --topic weather.current.raw --partitions 3 --replication-factor 1
+        --config retention.ms=604800000 --if-not-exists &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create
+        --topic weather.current.dlq --partitions 1 --replication-factor 1
+        --config retention.ms=604800000 --if-not-exists &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create
+        --topic weather.alert --partitions 1 --replication-factor 1
+        --config retention.ms=604800000 --if-not-exists &&
+        echo "Topics created" &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list
+    env_file:
+      - .env
+
+  weather-producer:
+    build:
+      context: .
+      dockerfile: docker/stream/Dockerfile
+    image: panganwatch-stream:latest
+    container_name: panganwatch-weather-producer
+    # A large --loop + --interval (default 900s): runs continuously,
+    # polling every 15 minutes, instead of one cycle then exiting.
+    command: ["panganwatch.stream.producer", "--loop", "999999"]
+    mem_limit: 256m
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POLL_INTERVAL_SECONDS=900
+      - PRODUCER_ID=weather-producer-1
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  weather-consumer:
+    build:
+      context: .
+      dockerfile: docker/stream/Dockerfile
+    image: panganwatch-stream:latest
+    container_name: panganwatch-weather-consumer
+    command: ["panganwatch.stream.consumer"]
+    mem_limit: 256m
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - KAFKA_TOPIC_RAW=weather.current.raw
+      - KAFKA_TOPIC_DLQ=weather.current.dlq
+      - KAFKA_TOPIC_ALERT=weather.alert
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - MONGO_URI=mongodb://mongo:27017/${MONGO_DB}
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  airflow:
+    build:
+      context: .
+      dockerfile: docker/airflow/Dockerfile
+    image: panganwatch-airflow:latest
+    container_name: panganwatch-airflow
+    # `docker compose restart` (and a Docker daemon restart) reuse the same
+    # container filesystem, so $AIRFLOW_HOME/airflow-webserver.pid from the
+    # previous run survives; in the new PID namespace PID 48 is some other live
+    # process, so the webserver aborts with "Already running on PID 48 (or pid
+    # file is stale)" while scheduler/triggerer keep the container "Up
+    # (unhealthy)" forever. Purge stale pid files before every start (DEC-035).
+    command:
+      - bash
+      - -c
+      - rm -f "$${AIRFLOW_HOME:-/opt/airflow}"/airflow-*.pid && exec airflow standalone
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+    mem_limit: 3g
+    env_file:
+      - .env
+    environment:
+      # AIRFLOW_UID, AIRFLOW__CORE__FERNET_KEY, BPS_API_KEY, POSTGRES_*, MONGO_*
+      # come from .env (env_file above); only container-vs-host values are
+      # overridden here (DEC-030 — .env's POSTGRES_HOST=localhost/PORT=5433
+      # are host-side values, wrong inside this container).
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - MONGO_URI=mongodb://mongo:27017/${MONGO_DB}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - BPS_API_KEY=${BPS_API_KEY:-}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./dbt:/opt/airflow/dbt
+      - ./config:/opt/airflow/config
+      - ./scripts:/opt/airflow/scripts
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  mongo_data:
+  kafka_data:

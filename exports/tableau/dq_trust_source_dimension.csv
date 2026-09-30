@@ -1,0 +1,12 @@
+source,dimensi,rules_total,rules_passed,rules_failed,total_rows_checked,total_rows_failed,avg_score,pass_rate_pct,row_fail_rate_pct
+silver.cuaca_harian,accuracy,12,12,0,798684,17708,98.81,100.0,2.22
+silver.cuaca_harian,completeness,12,12,0,798684,0,100.0,100.0,0.0
+silver.cuaca_harian,uniqueness,4,4,0,266228,0,100.0,100.0,0.0
+silver.cuaca_harian,validity,4,4,0,266228,0,100.0,100.0,0.0
+silver.harga_pangan,accuracy,8,4,4,313042,70,99.975,50.0,0.02
+silver.harga_pangan,completeness,27,22,5,1710978,146676,88.1675,81.48,8.57
+silver.harga_pangan,consistency,16,16,0,938986,15,100.0,100.0,0.0
+silver.harga_pangan,timeliness,4,4,0,312972,0,100.0,100.0,0.0
+silver.harga_pangan,uniqueness,4,4,0,312972,0,100.0,100.0,0.0
+silver.harga_pangan,validity,12,12,0,626014,3,100.0,100.0,0.0
+silver.inflasi_kota,validity,2,2,0,19200,0,100.0,100.0,0.0

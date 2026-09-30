@@ -1,0 +1,4 @@
+pasangan,unit,n,rho,p_value
+inflasi_mtm vs pct_change_harga_pangan,provinsi x bulan,354,0.206,9.4e-05
+inflasi_mtm vs pct_change_harga_pangan (tanpa Jan-Feb 2026),provinsi x bulan,338,0.2087,0.000111
+rata-rata nasional per bulan (inflasi_mtm vs harga pangan),bulan,12,0.3077,0.330589

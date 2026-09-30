@@ -1,0 +1,113 @@
+dataset,role,raci_value,owner
+hdx_wfp_prices (bronze),Data Owner,A,WFP
+hdx_wfp_prices (bronze),Data Steward,R,PanganWatch data steward
+hdx_wfp_prices (bronze),Data Custodian,C,PanganWatch platform
+hdx_wfp_prices (bronze),Consumer,I,Analytics users
+open_meteo_daily (bronze),Data Owner,A,Open-Meteo
+open_meteo_daily (bronze),Data Steward,R,PanganWatch data steward
+open_meteo_daily (bronze),Data Custodian,C,PanganWatch platform
+open_meteo_daily (bronze),Consumer,I,Analytics users
+open_meteo_current (bronze),Data Owner,A,Open-Meteo
+open_meteo_current (bronze),Data Steward,R,PanganWatch data steward
+open_meteo_current (bronze),Data Custodian,C,PanganWatch platform
+open_meteo_current (bronze),Consumer,I,Streaming consumers
+wilayah_raw (bronze),Data Owner,A,Kemendagri/BPS/Open-Meteo Geocoding
+wilayah_raw (bronze),Data Steward,R,PanganWatch data steward
+wilayah_raw (bronze),Data Custodian,C,PanganWatch platform
+wilayah_raw (bronze),Consumer,I,Reference data users
+pihps_prices (bronze),Data Owner,A,Bapanas/Panel Harga
+pihps_prices (bronze),Data Steward,R,PanganWatch data steward
+pihps_prices (bronze),Data Custodian,C,PanganWatch platform
+pihps_prices (bronze),Consumer,I,Analytics users
+bps_inflation (bronze),Data Owner,A,BPS
+bps_inflation (bronze),Data Steward,R,PanganWatch data steward
+bps_inflation (bronze),Data Custodian,C,PanganWatch platform
+bps_inflation (bronze),Consumer,I,Analytics users
+silver.harga_pangan,Data Owner,A,PanganWatch data owner
+silver.harga_pangan,Data Steward,R,PanganWatch data steward
+silver.harga_pangan,Data Custodian,C,PanganWatch platform
+silver.harga_pangan,Consumer,I,Analytics users
+silver.cuaca_harian,Data Owner,A,PanganWatch data owner
+silver.cuaca_harian,Data Steward,R,PanganWatch data steward
+silver.cuaca_harian,Data Custodian,C,PanganWatch platform
+silver.cuaca_harian,Consumer,I,Analytics users
+silver.cuaca_terkini,Data Owner,A,PanganWatch data owner
+silver.cuaca_terkini,Data Steward,R,PanganWatch data steward
+silver.cuaca_terkini,Data Custodian,C,PanganWatch platform
+silver.cuaca_terkini,Consumer,I,Streaming consumers
+governance.pipeline_runs,Data Owner,A,PanganWatch governance
+governance.pipeline_runs,Data Steward,R,PanganWatch data steward
+governance.pipeline_runs,Data Custodian,C,PanganWatch platform
+governance.pipeline_runs,Consumer,I,Platform operators
+governance.dq_results,Data Owner,A,PanganWatch governance
+governance.dq_results,Data Steward,R,PanganWatch data steward
+governance.dq_results,Data Custodian,C,PanganWatch platform
+governance.dq_results,Consumer,I,Data quality consumers
+governance.quarantine,Data Owner,A,PanganWatch governance
+governance.quarantine,Data Steward,R,PanganWatch data steward
+governance.quarantine,Data Custodian,C,PanganWatch platform
+governance.quarantine,Consumer,I,Data quality consumers
+governance.weather_alerts,Data Owner,A,PanganWatch governance
+governance.weather_alerts,Data Steward,R,PanganWatch data steward
+governance.weather_alerts,Data Custodian,C,PanganWatch platform
+governance.weather_alerts,Consumer,I,Streaming consumers
+governance_glossary,Data Owner,A,PanganWatch governance
+governance_glossary,Data Steward,R,PanganWatch data steward
+governance_glossary,Data Custodian,C,PanganWatch platform
+governance_glossary,Consumer,I,All users
+governance_raci,Data Owner,A,PanganWatch governance
+governance_raci,Data Steward,R,PanganWatch data steward
+governance_raci,Data Custodian,C,PanganWatch platform
+governance_raci,Consumer,I,All users
+ref.ref_provinsi,Data Owner,A,Kemendagri/BPS
+ref.ref_provinsi,Data Steward,R,PanganWatch data steward
+ref.ref_provinsi,Data Custodian,C,PanganWatch platform
+ref.ref_provinsi,Consumer,I,All users
+ref.ref_kabkota,Data Owner,A,Kemendagri/BPS
+ref.ref_kabkota,Data Steward,R,PanganWatch data steward
+ref.ref_kabkota,Data Custodian,C,PanganWatch platform
+ref.ref_kabkota,Consumer,I,All users
+ref.ref_komoditas,Data Owner,A,PanganWatch reference data
+ref.ref_komoditas,Data Steward,R,PanganWatch data steward
+ref.ref_komoditas,Data Custodian,C,PanganWatch platform
+ref.ref_komoditas,Consumer,I,All users
+ref.ref_crosswalk_wilayah,Data Owner,A,PanganWatch reference data
+ref.ref_crosswalk_wilayah,Data Steward,R,PanganWatch data steward
+ref.ref_crosswalk_wilayah,Data Custodian,C,PanganWatch platform
+ref.ref_crosswalk_wilayah,Consumer,I,All users
+ref.ref_provinsi_alias,Data Owner,A,PanganWatch reference data
+ref.ref_provinsi_alias,Data Steward,R,PanganWatch data steward
+ref.ref_provinsi_alias,Data Custodian,C,PanganWatch platform
+ref.ref_provinsi_alias,Consumer,I,All users
+ref.ref_komoditas_alias,Data Owner,A,PanganWatch reference data
+ref.ref_komoditas_alias,Data Steward,R,PanganWatch data steward
+ref.ref_komoditas_alias,Data Custodian,C,PanganWatch platform
+ref.ref_komoditas_alias,Consumer,I,All users
+gold.dim_provinsi,Data Owner,A,PanganWatch analytics
+gold.dim_provinsi,Data Steward,R,PanganWatch data steward
+gold.dim_provinsi,Data Custodian,C,PanganWatch platform
+gold.dim_provinsi,Consumer,I,Analytics users
+gold.dim_komoditas,Data Owner,A,PanganWatch analytics
+gold.dim_komoditas,Data Steward,R,PanganWatch data steward
+gold.dim_komoditas,Data Custodian,C,PanganWatch platform
+gold.dim_komoditas,Consumer,I,Analytics users
+gold.dim_tanggal,Data Owner,A,PanganWatch analytics
+gold.dim_tanggal,Data Steward,R,PanganWatch data steward
+gold.dim_tanggal,Data Custodian,C,PanganWatch platform
+gold.dim_tanggal,Consumer,I,Analytics users
+gold.fct_harga_bulanan,Data Owner,A,PanganWatch analytics
+gold.fct_harga_bulanan,Data Steward,R,PanganWatch data steward
+gold.fct_harga_bulanan,Data Custodian,C,PanganWatch platform
+gold.fct_harga_bulanan,Consumer,I,Analytics users
+gold.mart_disparitas_provinsi,Data Owner,A,PanganWatch analytics
+gold.mart_disparitas_provinsi,Data Steward,R,PanganWatch data steward
+gold.mart_disparitas_provinsi,Data Custodian,C,PanganWatch platform
+gold.mart_disparitas_provinsi,Consumer,I,Analytics users
+gold.mart_cuaca_harga_bulanan,Data Owner,A,PanganWatch analytics
+gold.mart_cuaca_harga_bulanan,Data Steward,R,PanganWatch data steward
+gold.mart_cuaca_harga_bulanan,Data Custodian,C,PanganWatch platform
+gold.mart_cuaca_harga_bulanan,Consumer,I,Analytics users
+gold.mart_dq_scorecard,Data Owner,A,PanganWatch analytics
+gold.mart_dq_scorecard,Data Steward,R,PanganWatch data steward
+gold.mart_dq_scorecard,Data Custodian,C,PanganWatch platform
+gold.mart_dq_scorecard,Consumer,I,Governance consumers

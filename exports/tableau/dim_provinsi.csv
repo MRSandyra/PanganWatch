@@ -1,0 +1,39 @@
+kode_provinsi_bps,nama_provinsi,ibu_kota,lat,lon,kode_kemendagri
+11,Aceh,Banda Aceh,5.54167,95.33333,11
+12,Sumatera Utara,Medan,3.58333,98.66667,12
+13,Sumatera Barat,Padang,-0.94924,100.35427,13
+14,Riau,Pekanbaru,0.51667,101.44167,14
+15,Jambi,Jambi,-1.6,103.61667,15
+16,Sumatera Selatan,Palembang,-2.91673,104.7458,16
+17,Bengkulu,Bengkulu,-3.80044,102.26554,17
+18,Lampung,Bandar Lampung,-5.42917,105.26111,18
+19,Kepulauan Bangka Belitung,Pangkalpinang,-2.12914,106.11377,19
+21,Kepulauan Riau,Tanjungpinang,0.91667,104.45833,21
+31,Daerah Khusus Ibukota Jakarta,Jakarta,-6.21462,106.84513,31
+32,Jawa Barat,Bandung,-6.92222,107.60694,32
+33,Jawa Tengah,Semarang,-6.99306,110.42083,33
+34,Daerah Istimewa Yogyakarta,Yogyakarta,-7.80139,110.36472,34
+35,Jawa Timur,Surabaya,-7.24917,112.75083,35
+36,Banten,Serang,-6.11528,106.15417,36
+51,Bali,Denpasar,-8.65,115.21667,51
+52,Nusa Tenggara Barat,Mataram,-8.58333,116.11667,52
+53,Nusa Tenggara Timur,Kupang,-10.17083,123.60694,53
+61,Kalimantan Barat,Pontianak,-0.03194,109.325,61
+62,Kalimantan Tengah,Palangkaraya,-2.20833,113.91667,62
+63,Kalimantan Selatan,Banjarmasin,-3.31987,114.59075,63
+64,Kalimantan Timur,Samarinda,-0.49167,117.14583,64
+65,Kalimantan Utara,Tanjung Selor,2.8375,117.36528,65
+71,Sulawesi Utara,Manado,1.48218,124.84892,71
+72,Sulawesi Tengah,Palu,-0.90833,119.87083,72
+73,Sulawesi Selatan,Makassar,-5.14861,119.43194,73
+74,Sulawesi Tenggara,Kendari,-3.9778,122.51507,74
+75,Gorontalo,Gorontalo,0.5375,123.0625,75
+76,Sulawesi Barat,Mamuju,-2.68056,118.88611,76
+81,Maluku,Ambon,-3.69583,128.18333,81
+82,Maluku Utara,Sofifi,0.73729,127.5588,82
+91,Papua,Jayapura,-2.53371,140.71812,91
+92,Papua Barat,Manokwari,-0.86291,134.06403,92
+93,Papua Selatan,Merauke,-8.49958,140.40613,93
+94,Papua Tengah,Nabire,-3.35989,135.50073,94
+95,Papua Pegunungan,Wamena,-4.09583,138.94806,95
+96,Papua Barat Daya,Sorong,-0.87956,131.26105,96
