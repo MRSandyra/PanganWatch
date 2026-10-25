@@ -62,8 +62,8 @@ prepared is listed under each item. Last updated 2026-09-28.
 - **Human task:** if you want it, stop the stack (`docker compose down`, without `-v`), make sure at least 8 GB of RAM is free, and install OpenMetadata outside this project.
 
 ## 10. Git operations
-- **Data state:** `CHANGELOG.md` lists the changes made in each version, in order (F0 through the current version).
-- **Human task:** `git init`, commit the working tree (following `CHANGELOG.md`'s version history for a sensible commit breakdown, or as a single initial commit), double-check there are no secrets (`.env` is ignored; run the scan from task 2), create the public GitHub repo, `git push`, tag `v1.0.0`. Also run `uv run ruff format --check .` (already passing) so CI stays green.
+- **Data state:** the repo has been committed (single "Initial Commit") and pushed to the public GitHub repo (`origin/main`); `CHANGELOG.md` lists the changes made in each version, in order (F0 through the current version).
+- **Human task:** tag the release `v1.0.0` and push the tag. Also run `uv run ruff format --check .` (already passing) so CI stays green.
 
 ## 11. CV & LinkedIn
 - **Data state:** `README.md` section 2 ("Key findings") and `docs/findings.md` have the key figures.

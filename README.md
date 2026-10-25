@@ -214,7 +214,7 @@ in [`docs/handover.md`](docs/handover.md).
 - **`panganwatch_reference` DAG cannot re-seed** while `silver.harga_pangan` holds rows (FK vs. `dbt seed` TRUNCATE, DEC-023/DEC-031); `export_bi`/`build_report` tasks in the daily DAG are skipped by design (DEC-029) — run `make export` / `make report` instead.
 - **The Tableau Public workbook is not published** (needs a human account); the guide describes how.
 - **Rebuild from empty volumes was not exercised** (it would destroy ~20k silver rows and is forbidden by project policy); it is a human step in [`docs/handover.md`](docs/handover.md) (DEC-037).
-- **No git command has been run in this repo yet**; see [`docs/handover.md`](docs/handover.md) for the initial commit/push/tag steps.
+- **The repo has been committed and pushed to GitHub, but not yet tagged**; see [`docs/handover.md`](docs/handover.md) for the `v1.0.0` tag step.
 
 ## 9. Data sources and attribution
 
