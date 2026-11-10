@@ -1,8 +1,7 @@
 from pathlib import Path
 
 import yaml
-
-from src.quality import has_error_failures, mapped_rule_ids
+from src.quality import harga_pangan_rules, has_error_failures, mapped_rule_ids
 
 
 def test_every_existing_dq_rule_has_a_migration_mapping():
@@ -14,3 +13,9 @@ def test_every_existing_dq_rule_has_a_migration_mapping():
 def test_only_error_failures_block_gold():
     assert not has_error_failures([{"severity": "warn", "rows_failed": 10}])
     assert has_error_failures([{"severity": "error", "rows_failed": 1}])
+
+
+def test_hdx_wfp_quality_scope_contains_the_expected_price_rules():
+    rule_ids = {rule["rule_id"] for rule in harga_pangan_rules()}
+    assert {"HP-001", "HP-008", "HP-014"}.issubset(rule_ids)
+    assert "CH-001" not in rule_ids
