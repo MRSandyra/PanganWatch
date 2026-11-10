@@ -1,0 +1,30 @@
+# Values are deliberately workspace-neutral. Set PANGANWATCH_CATALOG only after preflight.
+migration_status: CLOUD_BLOCKED
+catalog_env: PANGANWATCH_CATALOG
+schemas:
+  landing: pw_landing
+  bronze: pw_bronze
+  silver: pw_silver
+  gold: pw_gold
+  governance: pw_governance
+volume: snapshots
+timezone: Asia/Jakarta
+snapshot_root: data/migration/snapshots
+allowed_licenses:
+  - CC-BY-IGO
+  - CC-BY-4.0
+  - MIT
+  - NOT_VERIFIED
+sources:
+  hdx_wfp:
+    url: https://data.humdata.org/dataset/wfp-food-prices-for-indonesia
+    license: CC-BY-IGO
+    format: csv
+  open_meteo:
+    url: https://open-meteo.com/en/terms
+    license: CC-BY-4.0
+    format: json
+  bps:
+    url: https://webapi.bps.go.id/
+    license: NOT_VERIFIED
+    format: json

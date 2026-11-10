@@ -15,6 +15,7 @@ dbt/**/dbt_packages/
 logs/
 data/tmp/
 data/raw/
+data/migration/snapshots/
 .pytest_cache/
 .coverage
 htmlcov/

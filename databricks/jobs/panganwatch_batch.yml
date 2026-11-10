@@ -1,0 +1,24 @@
+# Manual-only Lakeflow workflow. Deploy only after workspace preflight succeeds.
+resources:
+  jobs:
+    panganwatch_batch:
+      name: panganwatch_batch
+      max_concurrent_runs: 1
+      tasks:
+        - task_key: validate_snapshot
+          notebook_task: {notebook_path: ../notebooks/00_preflight.py}
+        - task_key: load_bronze
+          depends_on: [{task_key: validate_snapshot}]
+          notebook_task: {notebook_path: ../notebooks/01_bronze.py}
+        - task_key: build_silver
+          depends_on: [{task_key: load_bronze}]
+          notebook_task: {notebook_path: ../notebooks/02_silver.py}
+        - task_key: run_quality
+          depends_on: [{task_key: build_silver}]
+          notebook_task: {notebook_path: ../notebooks/03_quality.py}
+        - task_key: build_gold
+          depends_on: [{task_key: run_quality}]
+          notebook_task: {notebook_path: ../notebooks/04_gold.py}
+        - task_key: reconcile_and_record
+          depends_on: [{task_key: build_gold}]
+          notebook_task: {notebook_path: ../notebooks/05_reconciliation.py}

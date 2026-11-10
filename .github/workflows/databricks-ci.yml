@@ -1,0 +1,25 @@
+name: Databricks migration (offline)
+
+on:
+  push:
+    branches: [main, master, "feature/**"]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  offline-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - run: uv run ruff check databricks scripts/export_frozen_snapshot.py scripts/generate_snapshot_manifest.py scripts/prepare_databricks_upload.py scripts/compare_local_cloud.py
+      - run: uv run ruff format --check databricks scripts/export_frozen_snapshot.py scripts/generate_snapshot_manifest.py scripts/prepare_databricks_upload.py scripts/compare_local_cloud.py
+      - run: uv run pytest -q databricks/tests
+      - name: Reject credential-like migration config
+        run: "! rg -n --glob '!docs/**' --glob '!**/*.lock' '(dapi[a-zA-Z0-9]{20,}|DATABRICKS_TOKEN\s*=)' databricks scripts"
+      - name: Cloud integration status
+        run: echo "Cloud integration tests are intentionally manual and require owner OAuth in Databricks Free Edition."

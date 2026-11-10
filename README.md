@@ -227,3 +227,7 @@ in [`docs/handover.md`](docs/handover.md).
 | Panel Harga Badan Pangan / PIHPS | Daily prices — **not used** (no usable API) | not verified (unused) | [panelharga.badanpangan.go.id](https://panelharga.badanpangan.go.id/) |
 
 This repository is a portfolio project, not an official statistics product.
+
+## Databricks Free Edition migration
+
+The local MongoDB/PostgreSQL/Airflow/dbt/Kafka platform remains intact while a batch-oriented Databricks Lakehouse migration is implemented in [`databricks/`](databricks/). It uses frozen, checksummed source snapshots; Unity Catalog Volume landing; Bronze/Silver/Gold Delta tables; the existing 27-rule DQ semantics; and a manual Lakeflow workflow. The current status is **CLOUD_BLOCKED**: no authenticated Free Edition workspace was available, so no cloud objects, job runs, SQL results, or dashboard are claimed. The honest deployment checklist, architecture, constraints, and owner actions are in [`docs/migration/`](docs/migration/).

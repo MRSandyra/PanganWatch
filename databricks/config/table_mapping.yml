@@ -1,0 +1,16 @@
+tables:
+  hdx_wfp:
+    snapshot_pattern: hdx_wfp/*
+    bronze: harga_pangan_raw
+    silver: harga_pangan
+    business_key: [tanggal, kode_provinsi_bps, kode_kabkota_bps, komoditas_id, jenis_pasar, source]
+  open_meteo:
+    snapshot_pattern: open_meteo/*
+    bronze: cuaca_harian_raw
+    silver: cuaca_harian
+    business_key: [tanggal, kode_provinsi_bps]
+  bps:
+    snapshot_pattern: bps/*
+    bronze: inflasi_kota_raw
+    silver: inflasi_kota
+    business_key: [bulan, kode_vervar]
