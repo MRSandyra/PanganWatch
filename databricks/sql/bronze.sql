@@ -1,0 +1,3 @@
+-- Bronze tables are created by databricks.src.bronze from source-native snapshots.
+-- Each row carries _snapshot_id, _source_sha256, _source_url, and _ingested_at.
+-- Reprocessing the same snapshot_id is an idempotent no-op.

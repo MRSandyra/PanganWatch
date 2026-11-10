@@ -1,0 +1,2 @@
+-- Silver tables are created from databricks.src.schemas explicit contracts.
+-- databricks.src.silver deduplicates before Delta MERGE on each documented business key.

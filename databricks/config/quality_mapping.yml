@@ -1,0 +1,29 @@
+# One entry per source rule. warn remains informational; error blocks Gold publication.
+rules:
+  HP-001: {implementation: not_null, target: pw_governance.dq_results}
+  HP-002: {implementation: not_null, target: pw_governance.dq_results}
+  HP-003: {implementation: not_null, target: pw_governance.dq_results}
+  HP-004: {implementation: not_null, target: pw_governance.dq_results}
+  HP-005: {implementation: range, target: pw_governance.dq_results}
+  HP-006: {implementation: in_reference, target: pw_governance.dq_results}
+  HP-007: {implementation: in_reference, target: pw_governance.dq_results}
+  HP-008: {implementation: unique_key, target: pw_governance.dq_results}
+  HP-009: {implementation: range, target: pw_governance.dq_results}
+  HP-010: {implementation: max_pct_change, target: pw_governance.dq_results}
+  HP-011: {implementation: freshness, target: pw_governance.dq_results}
+  HP-012: {implementation: completeness_ratio, target: pw_governance.dq_results}
+  HP-013: {implementation: cross_source_diff, target: pw_governance.dq_results}
+  HP-014: {implementation: completeness_ratio, target: pw_governance.dq_results}
+  CH-001: {implementation: not_null, target: pw_governance.dq_results}
+  CH-002: {implementation: not_null, target: pw_governance.dq_results}
+  CH-003: {implementation: not_null, target: pw_governance.dq_results}
+  CH-004: {implementation: range, target: pw_governance.dq_results}
+  CH-005: {implementation: range, target: pw_governance.dq_results}
+  CH-006: {implementation: range, target: pw_governance.dq_results}
+  CH-007: {implementation: custom_range, target: pw_governance.dq_results}
+  CH-008: {implementation: unique_key, target: pw_governance.dq_results}
+  CT-001: {implementation: freshness, target: pw_governance.dq_results}
+  IN-001: {implementation: range, target: pw_governance.dq_results}
+  RF-001: {implementation: row_count, target: pw_governance.dq_results}
+  RF-002: {implementation: range, target: pw_governance.dq_results}
+  RF-003: {implementation: range, target: pw_governance.dq_results}

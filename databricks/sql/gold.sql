@@ -1,0 +1,2 @@
+-- Gold publication is staging-first. databricks.src.gold only publishes after the DQ caller
+-- confirms there are no error-severity results for the same run and snapshot.
