@@ -1,6 +1,10 @@
 from pathlib import Path
 
-from src.silver import HDX_WFP_NATIONAL_MARKET, HDX_WFP_NATIONAL_PROVINCE_CODE
+from src.silver import (
+    HDX_WFP_GOVERNANCE_COLUMNS,
+    HDX_WFP_NATIONAL_MARKET,
+    HDX_WFP_NATIONAL_PROVINCE_CODE,
+)
 
 
 def test_hdx_wfp_national_mapping_is_explicit_and_does_not_invent_regional_codes():
@@ -24,3 +28,10 @@ def test_hdx_wfp_uses_committed_aliases_and_requires_an_explicit_rebuild():
     assert 'ref_provinsi_alias' in source
     assert 'ref_komoditas_alias' in source
     assert 'rebuild_hdx_wfp=true' in source
+
+
+def test_unmapped_governance_schema_excludes_temporary_reference_join_columns():
+    assert "_admin1" not in HDX_WFP_GOVERNANCE_COLUMNS
+    assert "_kode_provinsi_bps" not in HDX_WFP_GOVERNANCE_COLUMNS
+    assert "_commodity" not in HDX_WFP_GOVERNANCE_COLUMNS
+    assert "_komoditas_id" not in HDX_WFP_GOVERNANCE_COLUMNS

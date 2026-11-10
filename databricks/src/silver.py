@@ -7,6 +7,28 @@ from .schemas import spark_schema
 
 HDX_WFP_NATIONAL_MARKET = "national average"
 HDX_WFP_NATIONAL_PROVINCE_CODE = "00"
+HDX_WFP_GOVERNANCE_COLUMNS = [
+    "date",
+    "admin1",
+    "admin2",
+    "market",
+    "market_id",
+    "latitude",
+    "longitude",
+    "category",
+    "commodity",
+    "commodity_id",
+    "unit",
+    "priceflag",
+    "pricetype",
+    "currency",
+    "price",
+    "usdprice",
+    "_snapshot_id",
+    "_source_sha256",
+    "_source_url",
+    "_ingested_at",
+]
 
 KEYS = {
     "harga_pangan": [
@@ -137,10 +159,17 @@ def record_hdx_wfp_unmapped_geography(spark, config: MigrationConfig, frame, run
 
     target = config.qualified("governance", "hdx_wfp_unmapped_geography")
     records = (
-        frame.withColumn("_run_id", sf.lit(run_id))
+        frame.select(
+            *[sf.col(column) for column in HDX_WFP_GOVERNANCE_COLUMNS],
+            sf.col("_exclusion_reason"),
+        )
+        .withColumn("_run_id", sf.lit(run_id))
         .withColumn(
             "_record_key",
-            sf.sha2(sf.to_json(sf.struct(*[sf.col(column) for column in frame.columns])), 256),
+            sf.sha2(
+                sf.to_json(sf.struct(*[sf.col(column) for column in HDX_WFP_GOVERNANCE_COLUMNS])),
+                256,
+            ),
         )
     )
     if spark.catalog.tableExists(target):
