@@ -6,7 +6,8 @@ from pathlib import Path
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[2]
+# `quality.py` lives at <project>/databricks/src/quality.py.
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def mapped_rule_ids(path: Path | None = None) -> set[str]:

@@ -11,7 +11,9 @@ from typing import Any
 import yaml
 
 IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
-ROOT = Path(__file__).resolve().parents[2]
+# `config.py` lives at <project>/databricks/src/config.py.  The migration
+# resources live one parent above `src`, under <project>/databricks/.
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _identifier(value: str, label: str) -> str:
