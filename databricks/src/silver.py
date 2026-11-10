@@ -52,7 +52,10 @@ def write_silver(spark, config: MigrationConfig, dataset: str, frame, run_id: st
             typed = typed.withColumn(field.name, sf.lit(run_id))
         else:
             typed = typed.withColumn(field.name, sf.col(field.name).cast(field.dataType))
-    typed = deduplicate(typed.select(*[f.name for f in schema.fields]), KEYS[dataset])
+    # Deduplicate while Bronze provenance is still present.  The public Silver
+    # schema intentionally excludes those metadata columns, so selecting the
+    # contract fields must happen only after the deterministic ordering.
+    typed = deduplicate(typed, KEYS[dataset]).select(*[f.name for f in schema.fields])
     if not spark.catalog.tableExists(target):
         typed.write.format("delta").mode("overwrite").saveAsTable(target)
         return target
@@ -90,6 +93,8 @@ def split_hdx_wfp_prices(frame):
         sf.col("price").alias("harga"),
         sf.trim(sf.col("unit")).alias("satuan"),
         sf.lit("hdx_wfp").alias("source"),
+        sf.col("_ingested_at"),
+        sf.col("_source_sha256"),
     )
     unmapped = frame.where(~national).withColumn(
         "_exclusion_reason",
