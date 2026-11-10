@@ -154,8 +154,11 @@ Free Edition menggunakan serverless compute dan fair-use quota. Bila kuota habis
    ```powershell
    python scripts/prepare_databricks_upload.py `
      'data/migration/snapshots/hdx_wfp/<file>' `
-     'data/migration/snapshots/hdx_wfp/<file>.manifest.json'
+     'data/migration/snapshots/hdx_wfp/<file>.manifest.json' `
+     --catalog workspace
    ```
+
+   Ganti `workspace` bila preflight Anda menghasilkan nama catalog lain. Script akan mencetak target upload aktual `/Volumes/<catalog>/pw_landing/snapshots`.
 
 6. Manifest valid memuat snapshot ID, URL/lisensi, schema version, periode, fetch UTC, format/nama file, record count, dan SHA-256. Jika checksum mismatch, jangan edit snapshot: buat snapshot baru.
 
