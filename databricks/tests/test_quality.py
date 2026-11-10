@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from databricks.src.quality import has_error_failures, mapped_rule_ids
+from src.quality import has_error_failures, mapped_rule_ids
 
 
 def test_every_existing_dq_rule_has_a_migration_mapping():

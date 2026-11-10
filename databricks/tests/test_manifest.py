@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from databricks.src.manifest import build_manifest, validate_manifest, write_manifest
+from src.manifest import build_manifest, validate_manifest, write_manifest
 
 
 def test_manifest_is_deterministic_for_content(tmp_path: Path):

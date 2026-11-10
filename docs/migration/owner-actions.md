@@ -2,7 +2,7 @@
 
 Panduan ini untuk pemilik workspace. Ikuti secara berurutan dari repository lokal hingga bukti cloud. Jangan memakai layanan berbayar, object storage eksternal, atau hasil simulasi untuk melewati suatu langkah.
 
-> **Batas implementasi saat ini:** artefak snapshot, manifest, schema, Bronze, Silver, DQ, Gold, reconciliation, SQL, dan definisi Lakeflow sudah ada di repository, tetapi belum pernah dijalankan di workspace Databricks. Notebook `02_silver.py`, `03_quality.py`, dan `05_reconciliation.py` masih perlu dihubungkan ke mapping Bronze/Silver dan export dari snapshot yang benar-benar dipilih. Jangan mengklaim job cloud berhasil sebelum wiring tersebut dan semua verifikasi di bawah selesai.
+> **Batas implementasi saat ini:** artefak snapshot, manifest, schema, Bronze, Silver, DQ, Gold, reconciliation, SQL, dan definisi Lakeflow sudah ada di repository, tetapi belum pernah semuanya dijalankan di workspace Databricks. Notebook `02_silver.py` menjalankan mapping HDX/WFP yang disetujui: hanya `National Average` menjadi kode provinsi BPS `00`; wilayah lain tanpa crosswalk BPS tercatat di governance dan tidak diterbitkan ke Silver. Notebook `03_quality.py` dan `05_reconciliation.py` masih perlu dihubungkan ke hasil eksekusi yang sebenarnya. Jangan mengklaim job cloud berhasil sebelum seluruh verifikasi di bawah selesai.
 
 ## Alur untuk pemula
 
@@ -285,7 +285,7 @@ Databricks mendokumentasikan urutan **Workspace → Create → Git folder → re
 3. Setelah Git folder dibuat, buka `databricks/notebooks/00_preflight.py` dari folder itu. Notebook akan menambahkan folder proyek ke Python path dan mengimpor `src.config` secara lokal.
 4. Review `migration.yml`, `table_mapping.yml`, dan `quality_mapping.yml`. Ubah hanya nilai yang benar-benar merepresentasikan workspace/snapshot aktual; jangan hardcode URL personal atau credential.
 5. Jalankan `00_preflight.py`, lalu `01_bronze.py`, dengan path manifest dan file yang diupload. Bronze harus mempunyai `_snapshot_id`, `_source_sha256`, `_source_url`, `_ingested_at`.
-6. Lengkapi `02_silver.py` untuk source yang dipilih. Implementasinya harus map field source-native ke schema Silver eksplisit, memakai crosswalk provinsi/komoditas yang ada, deduplikasi sebelum Delta `MERGE`, dan menulis hanya ke `<catalog>.pw_silver.*`.
+6. Jalankan `02_silver.py` untuk source HDX/WFP. Isi widget `catalog` dengan catalog preflight (contoh `workspace`) dan `run_id` unik (contoh `20261110_hdx_wfp_01`). Notebook menerbitkan hanya market `National Average` sebagai kode provinsi BPS `00`, deduplikasi sebelum Delta `MERGE`, dan menulis baris geografis tanpa crosswalk ke `<catalog>.pw_governance.hdx_wfp_unmapped_geography`; tidak ada baris yang dibuang diam-diam.
 7. Lengkapi `03_quality.py`: baca `config/dq_rules.yml`, evaluasi setiap rule relevan, tulis hasil ke `pw_governance.dq_results`, tulis error ke `pw_governance.quarantine`, dan blokir Gold bila ada error. `HP-012` dan `HP-014` harus tetap warning.
 8. Jalankan `04_gold.py` hanya jika DQ gate tidak punya error. Validasi staging sebelum publish menggantikan Gold PanganWatch.
 9. Lengkapi `05_reconciliation.py` dengan export cloud/lokal untuk snapshot yang sama; simpan mismatch field-level pada governance/evidence.

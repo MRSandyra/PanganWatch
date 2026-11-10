@@ -1,7 +1,9 @@
 # ruff: noqa: E402, F821
 # Databricks notebook source
-# This thin notebook intentionally delegates typed MERGE logic to databricks.src.silver.
+# HDX/WFP mapping policy: only explicit National Average rows map to BPS code 00.
+# Rows with unapproved geography stay in Bronze and are recorded in governance.
 import sys
+from dataclasses import replace
 from pathlib import Path, PurePosixPath
 
 notebook_path = dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
@@ -22,8 +24,13 @@ if project_databricks_dir not in sys.path:
     sys.path.insert(0, project_databricks_dir)
 
 from src.config import load_config
+from src.silver import publish_hdx_wfp_prices
 
-config = load_config()
-print(
-    "Select the source-native Bronze table and call write_silver with its mapped, normalized frame."
-)
+dbutils.widgets.text("catalog", "", "Unity Catalog")
+dbutils.widgets.text("run_id", "", "Run ID")
+catalog = dbutils.widgets.get("catalog").strip()
+run_id = dbutils.widgets.get("run_id").strip()
+assert catalog, "Provide the verified Unity Catalog name in the catalog widget."
+assert run_id, "Provide a run ID, for example 20261110_hdx_wfp_01."
+config = replace(load_config(), catalog=catalog)
+print(publish_hdx_wfp_prices(spark, config, run_id))

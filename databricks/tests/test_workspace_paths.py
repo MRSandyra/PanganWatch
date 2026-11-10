@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from databricks.src.config import ROOT as CONFIG_ROOT
-from databricks.src.quality import ROOT as QUALITY_ROOT
+from src.config import ROOT as CONFIG_ROOT
+from src.quality import ROOT as QUALITY_ROOT
 
 
 def test_runtime_resource_roots_are_the_databricks_directory():

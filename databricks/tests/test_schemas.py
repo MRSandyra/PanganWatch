@@ -1,4 +1,4 @@
-from databricks.src.schemas import SCHEMA_SPECS
+from src.schemas import SCHEMA_SPECS
 
 
 def test_explicit_contracts_match_core_silver_datasets():

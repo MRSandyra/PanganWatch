@@ -1,4 +1,4 @@
-from databricks.src.silver import KEYS
+from src.silver import KEYS
 
 
 def test_silver_business_keys_preserve_local_upsert_contracts():

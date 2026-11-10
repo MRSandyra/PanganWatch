@@ -1,4 +1,4 @@
-from databricks.src.reconciliation import reconcile_records
+from src.reconciliation import reconcile_records
 
 
 def test_reconciliation_reports_field_difference():

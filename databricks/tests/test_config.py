@@ -1,6 +1,6 @@
 import pytest
 
-from databricks.src.config import load_config
+from src.config import load_config
 
 
 def test_workspace_name_is_config_driven():
