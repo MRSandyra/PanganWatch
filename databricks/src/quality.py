@@ -176,6 +176,43 @@ def run_harga_pangan_quality(spark, config: MigrationConfig, run_id: str) -> dic
     for rule in harga_pangan_rules():
         kind = rule["type"]
         if kind == "in_reference":
+            if rule["rule_id"] == "HP-006":
+                failed = frame.where(
+                    (sf.col("kode_provinsi_bps") != "00")
+                    & ~sf.col("kode_provinsi_bps").isin(
+                        [
+                            row["kode_bps"]
+                            for row in spark.table(
+                                config.qualified("reference", "ref_provinsi")
+                            ).select("kode_bps").collect()
+                        ]
+                    )
+                )
+            elif rule["rule_id"] == "HP-007":
+                failed = frame.join(
+                    spark.table(config.qualified("reference", "ref_komoditas")).select(
+                        "komoditas_id"
+                    ),
+                    "komoditas_id",
+                    "left_anti",
+                )
+            else:
+                failed = None
+            if failed is not None:
+                failed_count = failed.count()
+                results.append(
+                    _rule_result(
+                        rule,
+                        run_id,
+                        rows_checked,
+                        failed_count,
+                        "FAILED" if failed_count else "PASSED",
+                        "Validated against the committed PanganWatch reference seed.",
+                    )
+                )
+                if rule["severity"] == "error" and failed_count:
+                    failure_frames.append((rule, failed))
+                continue
             results.append(
                 _rule_result(
                     rule,

@@ -79,26 +79,54 @@ def _hdx_wfp_is_national(sf):
     )
 
 
-def split_hdx_wfp_prices(frame):
-    """Map WFP raw columns to the harga_pangan contract without silent loss."""
+def split_hdx_wfp_prices(spark, config: MigrationConfig, frame):
+    """Map WFP rows through committed HDX aliases without inventing identifiers."""
     from pyspark.sql import functions as sf  # type: ignore[import-not-found]
 
+    province_alias = (
+        spark.table(config.qualified("reference", "ref_provinsi_alias"))
+        .where(sf.col("sumber") == "HDX")
+        .select(
+            sf.col("nama_sumber").alias("_admin1"),
+            sf.col("kode_bps").alias("_kode_provinsi_bps"),
+        )
+    )
+    commodity_alias = (
+        spark.table(config.qualified("reference", "ref_komoditas_alias"))
+        .where(sf.col("sumber") == "HDX")
+        .select(
+            sf.col("nama_sumber").alias("_commodity"),
+            sf.col("komoditas_id").alias("_komoditas_id"),
+        )
+    )
+    enriched = (
+        frame.join(province_alias, frame.admin1 == province_alias._admin1, "left")
+        .join(commodity_alias, frame.commodity == commodity_alias._commodity, "left")
+    )
     national = _hdx_wfp_is_national(sf)
-    mapped = frame.where(national).select(
+    accepted = enriched.where(national | sf.col("_kode_provinsi_bps").isNotNull()).where(
+        sf.col("_komoditas_id").isNotNull()
+    )
+    mapped = accepted.select(
         sf.to_date(sf.col("date")).alias("tanggal"),
-        sf.lit(HDX_WFP_NATIONAL_PROVINCE_CODE).alias("kode_provinsi_bps"),
+        sf.when(national, sf.lit(HDX_WFP_NATIONAL_PROVINCE_CODE))
+        .otherwise(sf.col("_kode_provinsi_bps"))
+        .alias("kode_provinsi_bps"),
         sf.lit(None).cast("string").alias("kode_kabkota_bps"),
-        sf.col("commodity_id").cast("string").alias("komoditas_id"),
-        sf.trim(sf.col("pricetype")).alias("jenis_pasar"),
+        sf.col("_komoditas_id").cast("string").alias("komoditas_id"),
+        sf.trim(sf.col("market")).alias("jenis_pasar"),
         sf.col("price").alias("harga"),
-        sf.trim(sf.col("unit")).alias("satuan"),
+        sf.concat(sf.lit("rupiah/"), sf.trim(sf.col("unit"))).alias("satuan"),
         sf.lit("hdx_wfp").alias("source"),
         sf.col("_ingested_at"),
         sf.col("_source_sha256"),
     )
-    unmapped = frame.where(~national).withColumn(
+    unmapped = enriched.where(~(national | sf.col("_kode_provinsi_bps").isNotNull()) | sf.col("_komoditas_id").isNull()).withColumn(
         "_exclusion_reason",
-        sf.lit("WFP geography has no approved BPS crosswalk; retained outside Silver."),
+        sf.when(
+            sf.col("_komoditas_id").isNull(),
+            sf.lit("WFP commodity has no approved canonical commodity alias."),
+        ).otherwise(sf.lit("WFP geography has no approved BPS crosswalk.")),
     )
     return mapped, unmapped
 
@@ -122,11 +150,30 @@ def record_hdx_wfp_unmapped_geography(spark, config: MigrationConfig, frame, run
     return target
 
 
-def publish_hdx_wfp_prices(spark, config: MigrationConfig, run_id: str) -> dict[str, object]:
-    """Publish only approved national WFP data and retain unmapped rows visibly."""
+def publish_hdx_wfp_prices(
+    spark, config: MigrationConfig, run_id: str, *, rebuild_hdx_wfp: bool = False
+) -> dict[str, object]:
+    """Publish alias-resolved WFP prices and retain unmapped rows visibly."""
     bronze = config.qualified("bronze", "hdx_wfp_raw")
-    mapped, unmapped = split_hdx_wfp_prices(spark.table(bronze))
+    raw = spark.table(bronze)
+    target = config.qualified("silver", "harga_pangan")
+    if spark.catalog.tableExists(target) and not rebuild_hdx_wfp:
+        raise RuntimeError(
+            "Set rebuild_hdx_wfp=true once to replace the earlier provisional HDX/WFP Silver rows "
+            "with rows resolved through the committed reference aliases."
+        )
+    replaced_rows = 0
+    if rebuild_hdx_wfp and spark.catalog.tableExists(target):
+        replaced_rows = spark.table(target).where("source = 'hdx_wfp'").count()
+        spark.sql(f"DELETE FROM {target} WHERE source = 'hdx_wfp'")
+    mapped, unmapped = split_hdx_wfp_prices(spark, config, raw)
     silver_target = write_silver(spark, config, "harga_pangan", mapped, run_id)
+    if rebuild_hdx_wfp:
+        snapshot_ids = [row["_snapshot_id"] for row in raw.select("_snapshot_id").distinct().collect()]
+        unmapped_target = config.qualified("governance", "hdx_wfp_unmapped_geography")
+        if spark.catalog.tableExists(unmapped_target) and snapshot_ids:
+            quoted = ", ".join(repr(value) for value in snapshot_ids)
+            spark.sql(f"DELETE FROM {unmapped_target} WHERE _snapshot_id IN ({quoted})")
     unmapped_target = record_hdx_wfp_unmapped_geography(spark, config, unmapped, run_id)
     return {
         "bronze_table": bronze,
@@ -134,5 +181,6 @@ def publish_hdx_wfp_prices(spark, config: MigrationConfig, run_id: str) -> dict[
         "unmapped_governance_table": unmapped_target,
         "silver_rows_for_run": mapped.count(),
         "unmapped_rows_for_run": unmapped.count(),
-        "geography_policy": "National Average -> kode_provinsi_bps=00; other rows retained as unmapped.",
+        "replaced_provisional_hdx_wfp_rows": replaced_rows,
+        "mapping_policy": "Committed HDX province and commodity aliases; National Average -> code 00; unmapped values retained in governance.",
     }

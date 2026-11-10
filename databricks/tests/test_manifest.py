@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from src.manifest import build_manifest, validate_manifest, write_manifest
 
 

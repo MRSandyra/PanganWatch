@@ -28,9 +28,11 @@ from src.silver import publish_hdx_wfp_prices
 
 dbutils.widgets.text("catalog", "", "Unity Catalog")
 dbutils.widgets.text("run_id", "", "Run ID")
+dbutils.widgets.dropdown("rebuild_hdx_wfp", "false", ["false", "true"], "Rebuild HDX/WFP Silver")
 catalog = dbutils.widgets.get("catalog").strip()
 run_id = dbutils.widgets.get("run_id").strip()
+rebuild_hdx_wfp = dbutils.widgets.get("rebuild_hdx_wfp") == "true"
 assert catalog, "Provide the verified Unity Catalog name in the catalog widget."
 assert run_id, "Provide a run ID, for example 20261110_hdx_wfp_01."
 config = replace(load_config(), catalog=catalog)
-print(publish_hdx_wfp_prices(spark, config, run_id))
+print(publish_hdx_wfp_prices(spark, config, run_id, rebuild_hdx_wfp=rebuild_hdx_wfp))

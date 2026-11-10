@@ -7,6 +7,7 @@ schemas:
   silver: pw_silver
   gold: pw_gold
   governance: pw_governance
+  reference: pw_reference
 volume: snapshots
 timezone: Asia/Jakarta
 snapshot_root: data/migration/snapshots
