@@ -2,6 +2,7 @@
 # Databricks notebook source
 # HDX/WFP mapping policy: only explicit National Average rows map to BPS code 00.
 # Rows with unapproved geography stay in Bronze and are recorded in governance.
+import importlib
 import sys
 from dataclasses import replace
 from pathlib import Path, PurePosixPath
@@ -23,7 +24,10 @@ if project_databricks_dir is None:
 if project_databricks_dir not in sys.path:
     sys.path.insert(0, project_databricks_dir)
 
+import src.silver as silver_module
 from src.config import load_config
+
+importlib.reload(silver_module)
 from src.silver import publish_hdx_wfp_prices
 
 dbutils.widgets.text("catalog", "", "Unity Catalog")

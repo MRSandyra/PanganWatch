@@ -1,5 +1,6 @@
 # ruff: noqa: E402, F821
 # Databricks notebook source
+import importlib
 import sys
 from dataclasses import replace
 from pathlib import Path, PurePosixPath
@@ -21,7 +22,10 @@ if project_databricks_dir is None:
 if project_databricks_dir not in sys.path:
     sys.path.insert(0, project_databricks_dir)
 
+import src.quality as quality_module
 from src.config import load_config
+
+importlib.reload(quality_module)
 from src.quality import run_harga_pangan_quality
 
 dbutils.widgets.text("catalog", "", "Unity Catalog")
