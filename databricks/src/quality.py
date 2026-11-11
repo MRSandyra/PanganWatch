@@ -64,6 +64,12 @@ def harga_pangan_rules(path: Path | None = None) -> list[dict]:
     return [rule for rule in value["rules"] if rule["dataset"] == "silver.harga_pangan"]
 
 
+def cuaca_harian_rules(path: Path | None = None) -> list[dict]:
+    """Load the daily-weather rules that can be evaluated from the migrated table."""
+    value = yaml.safe_load((path or SOURCE_RULES).read_text(encoding="utf-8"))
+    return [rule for rule in value["rules"] if rule["dataset"] == "silver.cuaca_harian"]
+
+
 def _rule_result(rule: dict, run_id: str, rows_checked: int, rows_failed: int | None, status: str, note: str):
     return {
         "run_id": run_id,
@@ -304,5 +310,40 @@ def run_harga_pangan_quality(spark, config: MigrationConfig, run_id: str) -> dic
             item["rule_id"]
             for item in results
             if item["severity"] == "warn" and item["evaluation_status"] == "FAILED"
+        ],
+    }
+
+
+def run_cuaca_harian_quality(spark, config: MigrationConfig, run_id: str) -> dict[str, object]:
+    """Evaluate the self-contained daily-weather error rules before Gold publication."""
+    frame = spark.table(config.qualified("silver", "cuaca_harian"))
+    rows_checked = frame.count()
+    results: list[dict] = []
+    failure_frames: list[tuple[dict, object]] = []
+    for rule in cuaca_harian_rules():
+        failed = evaluate_rule(frame, rule)
+        failed_count = failed.count()
+        results.append(
+            _rule_result(
+                rule,
+                run_id,
+                rows_checked,
+                failed_count,
+                "FAILED" if failed_count else "PASSED",
+                rule["description"],
+            )
+        )
+        if rule["severity"] == "error" and failed_count:
+            failure_frames.append((rule, failed))
+    results_target = _write_quality_results(spark, config, results)
+    quarantine_target = _write_quarantine(spark, config, run_id, failure_frames)
+    return {
+        "dq_results_table": results_target,
+        "quarantine_table": quarantine_target,
+        "evaluated_rules": len(results),
+        "blocking_rules": [
+            item["rule_id"]
+            for item in results
+            if item["severity"] == "error" and item["evaluation_status"] != "PASSED"
         ],
     }

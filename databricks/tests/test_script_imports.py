@@ -10,6 +10,7 @@ def test_migration_scripts_add_the_repository_root_before_importing_modules():
         "generate_snapshot_manifest.py",
         "prepare_databricks_upload.py",
         "compare_local_cloud.py",
+        "fetch_open_meteo_snapshot.py",
     ]
     for script in scripts:
         script_path = project_root / "scripts" / script
