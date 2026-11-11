@@ -9,7 +9,7 @@ import sys
 import time
 from datetime import date, timedelta
 from pathlib import Path
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -62,6 +62,12 @@ def fetch_json(params: dict[str, str], *, pause_seconds: float, attempts: int) -
             except ValueError:
                 retry_after = 0
             time.sleep(max(pause_seconds, retry_after, 2**attempt))
+        except (json.JSONDecodeError, TimeoutError, URLError) as error:
+            if attempt == attempts:
+                raise RuntimeError(
+                    f"Open-Meteo response remained incomplete after {attempts} attempts: {error}"
+                ) from error
+            time.sleep(max(pause_seconds, 2**attempt))
     raise AssertionError("unreachable")
 
 
@@ -70,7 +76,7 @@ def main() -> int:
     parser.add_argument("--start-date", required=True, type=date.fromisoformat)
     parser.add_argument("--end-date", required=True, type=date.fromisoformat)
     parser.add_argument("--destination", required=True, type=Path)
-    parser.add_argument("--chunk-days", type=int, default=366)
+    parser.add_argument("--chunk-days", type=int, default=93)
     parser.add_argument("--locations-per-request", type=int, default=5)
     parser.add_argument("--pause-seconds", type=float, default=1.0)
     parser.add_argument("--max-attempts", type=int, default=6)
@@ -135,6 +141,11 @@ def main() -> int:
                     )
                     response_count += 1
                 time.sleep(args.pause_seconds)
+            print(
+                f"fetched {chunk_start.isoformat()}..{chunk_end.isoformat()} "
+                f"({response_count} frozen API envelopes)",
+                flush=True,
+            )
 
     partial_path.replace(args.destination)
 

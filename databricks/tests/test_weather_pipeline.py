@@ -15,4 +15,6 @@ def test_weather_snapshot_script_uses_committed_province_seed_and_era5():
     assert '"models": "era5"' in source
     assert "locations-per-request" in source
     assert "Retry-After" in source
+    assert "JSONDecodeError" in source
+    assert "frozen API envelopes" in source
     assert ".partial" in source
