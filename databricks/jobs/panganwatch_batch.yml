@@ -1,24 +1,69 @@
-# Manual-only Lakeflow workflow. Deploy only after workspace preflight succeeds.
+# Reference for a manual-only Lakeflow Job. Configure the same parameters in
+# Jobs & Pipelines; no paid cluster, trigger, or external storage is required.
 resources:
   jobs:
     panganwatch_batch:
       name: panganwatch_batch
       max_concurrent_runs: 1
+      parameters:
+        - name: catalog
+          default: workspace
+        - name: wfp_manifest_path
+          default: /Volumes/workspace/pw_landing/snapshots/hdx_wfp/wfp_food_prices_idn.csv.manifest.json
+        - name: wfp_snapshot_path
+          default: /Volumes/workspace/pw_landing/snapshots/hdx_wfp/wfp_food_prices_idn.csv
+        - name: weather_manifest_path
+          default: /Volumes/workspace/pw_landing/snapshots/open_meteo/open_meteo_era5_20070115_20260615.jsonl.manifest.json
+        - name: weather_snapshot_path
+          default: /Volumes/workspace/pw_landing/snapshots/open_meteo/open_meteo_era5_20070115_20260615.jsonl
       tasks:
-        - task_key: validate_snapshot
+        - task_key: validate_workspace
           notebook_task: {notebook_path: ../notebooks/00_preflight.py}
-        - task_key: load_bronze
-          depends_on: [{task_key: validate_snapshot}]
-          notebook_task: {notebook_path: ../notebooks/01_bronze.py}
-        - task_key: build_silver
-          depends_on: [{task_key: load_bronze}]
-          notebook_task: {notebook_path: ../notebooks/02_silver.py}
+        - task_key: load_reference
+          depends_on: [{task_key: validate_workspace}]
+          notebook_task: {notebook_path: ../notebooks/02_reference.py}
+        - task_key: load_wfp_bronze
+          depends_on: [{task_key: validate_workspace}]
+          notebook_task:
+            notebook_path: ../notebooks/01_bronze.py
+            base_parameters:
+              snapshot_manifest_path: "{{job.parameters.wfp_manifest_path}}"
+              local_file_path: "{{job.parameters.wfp_snapshot_path}}"
+        - task_key: load_weather_bronze
+          depends_on: [{task_key: validate_workspace}]
+          notebook_task:
+            notebook_path: ../notebooks/01_bronze.py
+            base_parameters:
+              snapshot_manifest_path: "{{job.parameters.weather_manifest_path}}"
+              local_file_path: "{{job.parameters.weather_snapshot_path}}"
+        - task_key: build_wfp_silver
+          depends_on: [{task_key: load_reference}, {task_key: load_wfp_bronze}]
+          notebook_task:
+            notebook_path: ../notebooks/02_silver.py
+            base_parameters:
+              rebuild_hdx_wfp: "false"
+              run_id: "job_{{job.run_id}}"
+        - task_key: build_weather_silver
+          depends_on: [{task_key: load_weather_bronze}]
+          notebook_task:
+            notebook_path: ../notebooks/02_weather_silver.py
+            base_parameters:
+              run_id: "job_{{job.run_id}}"
         - task_key: run_quality
-          depends_on: [{task_key: build_silver}]
-          notebook_task: {notebook_path: ../notebooks/03_quality.py}
+          depends_on: [{task_key: build_wfp_silver}, {task_key: build_weather_silver}]
+          notebook_task:
+            notebook_path: ../notebooks/03_quality.py
+            base_parameters:
+              run_id: "job_{{job.run_id}}"
         - task_key: build_gold
           depends_on: [{task_key: run_quality}]
-          notebook_task: {notebook_path: ../notebooks/04_gold.py}
+          notebook_task:
+            notebook_path: ../notebooks/04_gold.py
+            base_parameters:
+              run_id: "job_{{job.run_id}}"
         - task_key: reconcile_and_record
           depends_on: [{task_key: build_gold}]
-          notebook_task: {notebook_path: ../notebooks/05_reconciliation.py}
+          notebook_task:
+            notebook_path: ../notebooks/05_reconciliation.py
+            base_parameters:
+              run_id: "job_{{job.run_id}}"

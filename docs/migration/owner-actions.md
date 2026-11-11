@@ -307,29 +307,41 @@ Lakukan bagian ini **hanya** setelah setiap notebook sudah berhasil jika dijalan
 1. Di sidebar kiri, klik **Jobs & Pipelines**.
 2. Klik **Create** → **Job**.
 3. Pada task pertama, klik tile **Notebook**. Jika tile tidak ada, klik **Add another task type**, cari `Notebook`, lalu pilih.
-4. Isi **Task name**: `validate_snapshot`.
+4. Isi **Task name**: `validate_workspace`.
 5. Klik field **Path** → navigasikan ke Git folder `panganwatch/databricks/notebooks/00_preflight.py` → pilih notebook tersebut.
 6. Pada bagian **Compute**, pilih **Serverless** bila opsi ini tersedia. Jangan membuat classic cluster atau memilih cloud compute berbayar.
-7. Pada **Parameters**, tambahkan parameter yang benar-benar dipakai notebook, contohnya `catalog = <catalog-yang-lolos-preflight>`.
+7. Pada panel **Job details** → **Parameters**, tambahkan parameter job berikut. Nilai ini otomatis diteruskan ke Notebook tasks; jangan masukkan token atau secret.
+
+   | Name | Value |
+   |---|---|
+   | `catalog` | `workspace` |
+   | `wfp_manifest_path` | `/Volumes/workspace/pw_landing/snapshots/hdx_wfp/wfp_food_prices_idn.csv.manifest.json` |
+   | `wfp_snapshot_path` | `/Volumes/workspace/pw_landing/snapshots/hdx_wfp/wfp_food_prices_idn.csv` |
+   | `weather_manifest_path` | `/Volumes/workspace/pw_landing/snapshots/open_meteo/open_meteo_era5_20070115_20260615.jsonl.manifest.json` |
+   | `weather_snapshot_path` | `/Volumes/workspace/pw_landing/snapshots/open_meteo/open_meteo_era5_20070115_20260615.jsonl` |
 8. Klik **Save task**. Job baru biasanya bernama `New Job <tanggal waktu>`; klik namanya di halaman job dan ubah menjadi `panganwatch_batch`.
 9. Klik **Add task** dan ulangi proses untuk tiap task berikut. Pilih path notebook yang sesuai, lalu pada panel dependency pilih task pendahulunya:
 
    ```text
-   validate_snapshot → load_bronze → build_silver → run_quality → build_gold → reconcile_and_record
+   validate_workspace → {load_reference, load_wfp_bronze, load_weather_bronze}
+   → {build_wfp_silver, build_weather_silver} → run_quality → build_gold → reconcile_and_record
    ```
 
    | Task name | Notebook path | Depends on |
    |---|---|---|
-   | `validate_snapshot` | `databricks/notebooks/00_preflight.py` | — |
-   | `load_bronze` | `databricks/notebooks/01_bronze.py` | `validate_snapshot` |
-   | `build_silver` | `databricks/notebooks/02_silver.py` | `load_bronze` |
-   | `run_quality` | `databricks/notebooks/03_quality.py` | `build_silver` |
+   | `validate_workspace` | `databricks/notebooks/00_preflight.py` | — |
+   | `load_reference` | `databricks/notebooks/02_reference.py` | `validate_workspace` |
+   | `load_wfp_bronze` | `databricks/notebooks/01_bronze.py` | `validate_workspace` |
+   | `load_weather_bronze` | `databricks/notebooks/01_bronze.py` | `validate_workspace` |
+   | `build_wfp_silver` | `databricks/notebooks/02_silver.py` | `load_reference`, `load_wfp_bronze` |
+   | `build_weather_silver` | `databricks/notebooks/02_weather_silver.py` | `load_weather_bronze` |
+   | `run_quality` | `databricks/notebooks/03_quality.py` | `build_wfp_silver`, `build_weather_silver` |
    | `build_gold` | `databricks/notebooks/04_gold.py` | `run_quality` |
    | `reconcile_and_record` | `databricks/notebooks/05_reconciliation.py` | `build_gold` |
 
 10. Buka panel **Job details**. Set **Max concurrent runs** ke `1`.
 11. Jangan isi Schedule/Trigger; defaultnya manual. Untuk retry, pilih hanya error sementara platform/API. Jangan retry otomatis ketika DQ error atau manifest tidak valid.
-12. Isi parameter `snapshot_id` dan `run_id` yang sama pada setiap task yang memerlukannya. Gunakan UUID baru sebagai `run_id` untuk satu batch nyata dan jangan mengetik token/secret pada parameter job.
+12. Pada task `load_wfp_bronze`, masukkan task parameters `snapshot_manifest_path = {{job.parameters.wfp_manifest_path}}` dan `local_file_path = {{job.parameters.wfp_snapshot_path}}`. Pada `load_weather_bronze`, gunakan parameter yang sama tetapi dengan `weather_manifest_path` dan `weather_snapshot_path`. Pada `build_wfp_silver`, set `rebuild_hdx_wfp = false` serta `run_id = job_{{job.run_id}}`. Pada `build_weather_silver`, `run_quality`, `build_gold`, dan `reconcile_and_record`, set `run_id = job_{{job.run_id}}`. Semua task menerima `catalog` dari job parameter. Jangan mengetik token/secret pada parameter job.
 13. Klik **Run now** hanya sekali untuk snapshot yang telah diverifikasi. Klik nama run untuk melihat log setiap task.
 14. Simpan URL job, run ID, waktu mulai/selesai, task result, log tersanitasi, serta screenshot nyata. Jika salah satu task gagal, downstream task harus tidak berjalan.
 

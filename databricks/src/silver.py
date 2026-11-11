@@ -187,10 +187,21 @@ def publish_hdx_wfp_prices(
     raw = spark.table(bronze)
     target = config.qualified("silver", "harga_pangan")
     if spark.catalog.tableExists(target) and not rebuild_hdx_wfp:
-        raise RuntimeError(
-            "Set rebuild_hdx_wfp=true once to replace the earlier provisional HDX/WFP Silver rows "
-            "with rows resolved through the committed reference aliases."
+        reference_ids = spark.table(config.qualified("reference", "ref_komoditas")).select(
+            "komoditas_id"
         )
+        provisional_rows = (
+            spark.table(target)
+            .where("source = 'hdx_wfp'")
+            .join(reference_ids, "komoditas_id", "left_anti")
+            .limit(1)
+            .count()
+        )
+        if provisional_rows:
+            raise RuntimeError(
+                "Set rebuild_hdx_wfp=true once to replace provisional HDX/WFP Silver rows "
+                "whose commodity IDs have not been resolved through the committed aliases."
+            )
     replaced_rows = 0
     if rebuild_hdx_wfp and spark.catalog.tableExists(target):
         replaced_rows = spark.table(target).where("source = 'hdx_wfp'").count()

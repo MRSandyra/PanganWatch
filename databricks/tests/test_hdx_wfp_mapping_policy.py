@@ -30,6 +30,14 @@ def test_hdx_wfp_uses_committed_aliases_and_requires_an_explicit_rebuild():
     assert 'rebuild_hdx_wfp=true' in source
 
 
+def test_hdx_wfp_normal_reruns_allow_already_resolved_silver_rows():
+    source = (Path(__file__).resolve().parents[1] / "src" / "silver.py").read_text(
+        encoding="utf-8"
+    )
+    assert 'reference_ids = spark.table(config.qualified("reference", "ref_komoditas"))' in source
+    assert "if provisional_rows:" in source
+
+
 def test_unmapped_governance_schema_excludes_temporary_reference_join_columns():
     assert "_admin1" not in HDX_WFP_GOVERNANCE_COLUMNS
     assert "_kode_provinsi_bps" not in HDX_WFP_GOVERNANCE_COLUMNS
