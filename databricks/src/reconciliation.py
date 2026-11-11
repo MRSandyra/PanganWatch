@@ -85,12 +85,16 @@ def _comparison_frame(frame, dataset: str):
     from pyspark.sql import functions as sf  # type: ignore[import-not-found]
 
     from .schemas import spark_schema
+    from .silver import KEYS, deduplicate
 
     typed = frame
     schema_fields = {field.name: field for field in spark_schema(dataset).fields}
     for column in COMPARISON_COLUMNS[dataset]:
         typed = typed.withColumn(column, sf.col(column).cast(schema_fields[column].dataType))
-    return typed.select(*COMPARISON_COLUMNS[dataset])
+    # The target Silver table is a business-key MERGE, not a raw-row copy. The
+    # replay must use its exact de-duplication contract before it can be
+    # compared to the published logical records.
+    return deduplicate(typed, KEYS[dataset]).select(*COMPARISON_COLUMNS[dataset])
 
 
 def _write_reconciliation_results(spark, config: MigrationConfig, run_id: str, results: list[dict]) -> str:

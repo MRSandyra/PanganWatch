@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from src.reconciliation import COMPARISON_COLUMNS, reconcile_records
 
 
@@ -22,3 +24,10 @@ def test_source_replay_compares_contract_fields_not_run_audit_columns():
     assert "loaded_at" not in COMPARISON_COLUMNS["cuaca_harian"]
     assert "harga" in COMPARISON_COLUMNS["harga_pangan"]
     assert "precipitation_mm" in COMPARISON_COLUMNS["cuaca_harian"]
+
+
+def test_source_replay_uses_the_same_logical_deduplication_as_silver():
+    source = (Path(__file__).resolve().parents[1] / "src" / "reconciliation.py").read_text(
+        encoding="utf-8"
+    )
+    assert "deduplicate(typed, KEYS[dataset])" in source
