@@ -289,7 +289,7 @@ Databricks mendokumentasikan urutan **Workspace → Create → Git folder → re
 7. Untuk menjalankan mart Gold yang melibatkan cuaca, buat dulu snapshot Open-Meteo dengan rentang yang sama dengan WFP. Gunakan `02_weather_silver.py` setelah Bronze Open-Meteo tersedia. Open-Meteo Historical API menerima beberapa koordinat, interval tanggal, dan agregasi daily; gunakan model `era5` agar data multi-dekade konsisten. Simpan atribusi Open-Meteo/ERA5 serta lisensi CC BY 4.0 pada manifest/evidence.
 8. Setelah `harga_pangan` dan `cuaca_harian` tersedia, jalankan `03_quality.py` dengan catalog dan run ID batch yang sama. Ia mengevaluasi rule harga dan cuaca dari `config/dq_rules.yml`, menulis hasil ke `pw_governance.dq_results`, menulis kegagalan error ke `pw_governance.quarantine`, dan memblokir Gold bila ada error. `HP-012` dan `HP-014` tetap warning.
 8. Jalankan `04_gold.py` hanya jika DQ gate tidak punya error. Validasi staging sebelum publish menggantikan Gold PanganWatch.
-9. Lengkapi `05_reconciliation.py` dengan export cloud/lokal untuk snapshot yang sama; simpan mismatch field-level pada governance/evidence.
+9. Jalankan `05_reconciliation.py` setelah Gold. Ia melakukan **SOURCE_REPLAY**: membangun ulang expected Silver dari Bronze snapshot dan referensi committed lalu membandingkan record contract field dengan tabel Silver pada toleransi nol. Hasil ringkasan berada di `<catalog>.pw_governance.reconciliation_results`. Ini membuktikan replay cloud, bukan klaim parity terhadap database legacy lokal; gunakan `compare_local_cloud.py` hanya setelah export legacy yang benar-benar se-grain tersedia.
 
 ### Jika muncul `ModuleNotFoundError: No module named 'databricks.src'`
 
