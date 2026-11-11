@@ -13,3 +13,6 @@ def test_weather_snapshot_script_uses_committed_province_seed_and_era5():
     )
     assert "ref_provinsi.csv" in source
     assert '"models": "era5"' in source
+    assert "locations-per-request" in source
+    assert "Retry-After" in source
+    assert ".partial" in source

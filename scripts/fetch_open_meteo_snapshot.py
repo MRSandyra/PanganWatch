@@ -6,8 +6,10 @@ import argparse
 import csv
 import json
 import sys
+import time
 from datetime import date, timedelta
 from pathlib import Path
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -35,16 +37,32 @@ def date_chunks(start: date, end: date, days: int):
         cursor = chunk_end + timedelta(days=1)
 
 
-def fetch_json(params: dict[str, str]) -> list[dict]:
-    request = Request(
-        f"{ARCHIVE_URL}?{urlencode(params)}",
-        headers={"User-Agent": "PanganWatch/2.0 (frozen research snapshot)"},
-    )
-    with urlopen(request, timeout=120) as response:  # noqa: S310 - fixed HTTPS API endpoint
-        payload = json.loads(response.read().decode("utf-8"))
-    if isinstance(payload, dict) and payload.get("error"):
-        raise RuntimeError(f"Open-Meteo returned an error: {payload.get('reason', payload)}")
-    return payload if isinstance(payload, list) else [payload]
+def groups(values: list[dict[str, str]], size: int):
+    for index in range(0, len(values), size):
+        yield values[index : index + size]
+
+
+def fetch_json(params: dict[str, str], *, pause_seconds: float, attempts: int) -> list[dict]:
+    for attempt in range(1, attempts + 1):
+        request = Request(
+            f"{ARCHIVE_URL}?{urlencode(params)}",
+            headers={"User-Agent": "PanganWatch/2.0 (frozen research snapshot)"},
+        )
+        try:
+            with urlopen(request, timeout=120) as response:  # noqa: S310 - fixed HTTPS API endpoint
+                payload = json.loads(response.read().decode("utf-8"))
+            if isinstance(payload, dict) and payload.get("error"):
+                raise RuntimeError(f"Open-Meteo returned an error: {payload.get('reason', payload)}")
+            return payload if isinstance(payload, list) else [payload]
+        except HTTPError as error:
+            if error.code != 429 or attempt == attempts:
+                raise
+            try:
+                retry_after = float(error.headers.get("Retry-After", ""))
+            except ValueError:
+                retry_after = 0
+            time.sleep(max(pause_seconds, retry_after, 2**attempt))
+    raise AssertionError("unreachable")
 
 
 def main() -> int:
@@ -53,51 +71,72 @@ def main() -> int:
     parser.add_argument("--end-date", required=True, type=date.fromisoformat)
     parser.add_argument("--destination", required=True, type=Path)
     parser.add_argument("--chunk-days", type=int, default=366)
+    parser.add_argument("--locations-per-request", type=int, default=5)
+    parser.add_argument("--pause-seconds", type=float, default=1.0)
+    parser.add_argument("--max-attempts", type=int, default=6)
     args = parser.parse_args()
     if args.start_date > args.end_date:
         raise ValueError("--start-date must not be after --end-date")
     if args.chunk_days < 1:
         raise ValueError("--chunk-days must be at least 1")
+    if args.locations_per_request < 1:
+        raise ValueError("--locations-per-request must be at least 1")
+    if args.pause_seconds < 0:
+        raise ValueError("--pause-seconds must not be negative")
+    if args.max_attempts < 1:
+        raise ValueError("--max-attempts must be at least 1")
     if args.destination.exists():
         raise FileExistsError(f"Refusing to overwrite immutable snapshot: {args.destination}")
+    partial_path = args.destination.with_name(f"{args.destination.name}.partial")
+    if partial_path.exists():
+        raise FileExistsError(
+            f"Partial snapshot exists after an interrupted attempt: {partial_path}. "
+            "Inspect it, then remove it before retrying."
+        )
 
     provinces = read_provinces()
     if len(provinces) != 38:
         raise ValueError(f"Expected 38 committed province seeds, found {len(provinces)}")
     args.destination.parent.mkdir(parents=True, exist_ok=True)
     response_count = 0
-    with args.destination.open("x", encoding="utf-8") as output:
+    with partial_path.open("x", encoding="utf-8") as output:
         for chunk_start, chunk_end in date_chunks(args.start_date, args.end_date, args.chunk_days):
-            params = {
-                "latitude": ",".join(province["lat"] for province in provinces),
-                "longitude": ",".join(province["lon"] for province in provinces),
-                "start_date": chunk_start.isoformat(),
-                "end_date": chunk_end.isoformat(),
-                "daily": DAILY_FIELDS,
-                "timezone": "Asia/Jakarta",
-                "models": "era5",
-            }
-            responses = fetch_json(params)
-            if len(responses) != len(provinces):
-                raise RuntimeError(
-                    f"Expected {len(provinces)} API responses for {chunk_start}..{chunk_end}, got {len(responses)}"
+            for province_group in groups(provinces, args.locations_per_request):
+                params = {
+                    "latitude": ",".join(province["lat"] for province in province_group),
+                    "longitude": ",".join(province["lon"] for province in province_group),
+                    "start_date": chunk_start.isoformat(),
+                    "end_date": chunk_end.isoformat(),
+                    "daily": DAILY_FIELDS,
+                    "timezone": "Asia/Jakarta",
+                    "models": "era5",
+                }
+                responses = fetch_json(
+                    params, pause_seconds=args.pause_seconds, attempts=args.max_attempts
                 )
-            for province, response in zip(provinces, responses, strict=True):
-                output.write(
-                    json.dumps(
-                        {
-                            "requested_province": {
-                                "kode_provinsi_bps": province["kode_bps"],
-                                "nama_provinsi": province["nama_provinsi"],
-                            },
-                            "request": params,
-                            "response": response,
-                        },
-                        separators=(",", ":"),
+                if len(responses) != len(province_group):
+                    raise RuntimeError(
+                        f"Expected {len(province_group)} API responses for {chunk_start}..{chunk_end}, got {len(responses)}"
                     )
-                    + "\n"
-                )
-                response_count += 1
+                for province, response in zip(province_group, responses, strict=True):
+                    output.write(
+                        json.dumps(
+                            {
+                                "requested_province": {
+                                    "kode_provinsi_bps": province["kode_bps"],
+                                    "nama_provinsi": province["nama_provinsi"],
+                                },
+                                "request": params,
+                                "response": response,
+                            },
+                            separators=(",", ":"),
+                        )
+                        + "\n"
+                    )
+                    response_count += 1
+                time.sleep(args.pause_seconds)
+
+    partial_path.replace(args.destination)
 
     manifest = build_manifest(
         args.destination,
