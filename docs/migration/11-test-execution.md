@@ -4,8 +4,10 @@
 |---|---|---|
 | Python syntax | PASSED | `python -m compileall -q databricks scripts/...` exited 0 on 2026-11-09 |
 | Migration Ruff lint / format | PASSED | `ruff check` and `ruff format --check` passed before the local virtualenv recreation attempt |
-| `pytest databricks/tests` | NOT_EXECUTED | `uv` recreated `.venv` then could not resolve `files.pythonhosted.org` for locked packages (`sqlglot`, `pyarrow`, `mashumaro`); no test result was produced |
+| `pytest databricks/tests` | PASSED | `uv run pytest -q databricks/tests` completed with 25 tests passed after dependencies became available |
 | Existing project tests | NOT_EXECUTED | same missing dependency environment; legacy source was not altered |
-| Databricks integration | NOT_EXECUTED | no authenticated Free Edition workspace |
+| Databricks integration | PASSED | Actual Free Edition execution recorded in `evidence/cloud-run-20261111.md`: Bronze/Silver/DQ/Gold/source replay/job/dashboard |
 
-The earlier `.venv` was a generated environment and was removed/recreated by `uv` during the failed retry; rerun `uv sync --frozen` when package network access is available, then run `uv run pytest -q databricks/tests tests/unit`.
+The earlier `.venv` incident is retained as historical context. The current
+Databricks migration tests have since passed; local legacy tests remain outside
+the migration verification scope.
