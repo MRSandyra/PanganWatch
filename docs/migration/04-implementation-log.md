@@ -10,7 +10,9 @@
 | 2026-11-11 | PASSED | Manual `panganwatch_batch` job run completed: nine tasks successful in 2m42s; source replay passed for price and weather |
 | 2026-11-11 | PASSED | Published dashboard with four pages: price trend, data quality, provincial disparity, and monthly rainfall |
 | 2026-11-11 | NOT_EXECUTED | Row-level parity against the pre-migration local/legacy database |
+| 2026-11-12 | FAILED | Recovered legacy PostgreSQL overlap compared against cloud Silver: 155 legacy-only price keys; weather keys match but 40,086 daily values differ. Inputs are not proven byte-identical; see `evidence/legacy-overlap-20261112.md` |
 
 The historical `CLOUD_BLOCKED` entries describe the state before workspace
 access was available. They are superseded by the 2026-11-11 evidence above;
-legacy parity remains the outstanding verification item.
+legacy parity remains the outstanding verification item. The prior
+`NOT_EXECUTED` record is superseded by the actual bounded-overlap failure.

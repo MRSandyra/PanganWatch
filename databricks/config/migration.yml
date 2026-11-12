@@ -8,6 +8,7 @@ schemas:
   gold: pw_gold
   governance: pw_governance
   reference: pw_reference
+  legacy_replay: pw_legacy_replay
 volume: snapshots
 timezone: Asia/Jakarta
 snapshot_root: data/migration/snapshots

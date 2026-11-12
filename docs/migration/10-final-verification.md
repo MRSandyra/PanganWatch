@@ -23,13 +23,17 @@ cloud Bronze/Silver transformations; it is not a legacy parity assertion.
 | Databricks job | `panganwatch_batch` completed successfully: nine tasks green, 49 queries, 5,077,195 rows read, 434,401 rows written | PASSED |
 | Published dashboard | Four published pages cover national commodity prices, DQ, provincial disparity, and monthly rainfall | PASSED |
 
-Sanitized evidence is recorded in [cloud-run-20261111.md](evidence/cloud-run-20261111.md).
+Sanitized evidence is recorded in [cloud-run-20261111.md](evidence/cloud-run-20261111.md)
+and [legacy-overlap-20261112.md](evidence/legacy-overlap-20261112.md).
 
 ## Known limitations and decisions
 
-- **Legacy parity is NOT_EXECUTED.** The prior local system has not been
-  compared row-for-row against the cloud result. This is the reason for the
-  `CLOUD_PARTIAL` status.
+- **Legacy parity has been attempted and FAILED as a bounded overlap test.**
+  Recovered legacy data has 20,709 exact common price keys plus 155
+  legacy-only price keys; weather has matching keys but 40,086 value
+  mismatches. The source snapshots are not proven identical, so this cannot
+  establish parity. This is the reason for the `CLOUD_PARTIAL` status; see
+  [legacy overlap evidence](evidence/legacy-overlap-20261112.md).
 - WFP national aggregate prices cover 2007-01 through 2020-03 (1,263 rows,
   158 months). Provincial price coverage is 2016-07 through 2026-06 (27,635
   rows, 85 months). The two series must not be presented as a continuous,

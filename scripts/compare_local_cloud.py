@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import sys
 from pathlib import Path
@@ -11,10 +12,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from databricks.src.reconciliation import reconcile_records
-
 
 def rows(path: Path):
+    if path.suffix == ".csv":
+        with path.open(encoding="utf-8-sig", newline="") as handle:
+            return [
+                {key: value if value not in {"", "null"} else None for key, value in row.items()}
+                for row in csv.DictReader(handle)
+            ]
     text = path.read_text(encoding="utf-8")
     value = (
         json.loads(text)
@@ -25,6 +30,8 @@ def rows(path: Path):
 
 
 def main() -> int:
+    from databricks.src.reconciliation import reconcile_records
+
     p = argparse.ArgumentParser()
     p.add_argument("local", type=Path)
     p.add_argument("cloud", type=Path)

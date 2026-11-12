@@ -1,9 +1,10 @@
 # Cloud evidence index
 
 Actual sanitized evidence is available in
-[cloud-run-20261111.md](cloud-run-20261111.md). It records the successful
-Databricks Free Edition run and published dashboard without exposing a workspace
-host, URL, or user identity.
+[cloud-run-20261111.md](cloud-run-20261111.md) and
+[legacy-overlap-20261112.md](legacy-overlap-20261112.md). They record the
+successful Databricks Free Edition run and the failed bounded legacy overlap
+comparison without exposing a workspace host, URL, or user identity.
 
 For each future actual operation, add a sanitized JSON or Markdown record with:
 

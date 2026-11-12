@@ -306,9 +306,12 @@ Databricks-specific source layout is described in
 
 ### Important Lakehouse limitations
 
-- **Legacy parity is not executed.** Source replay proves reproducibility from
-  the uploaded snapshots; it does not prove equality with the old local
-  database.
+- **Legacy parity did not pass the executed bounded overlap test.** All 20,709
+  common price keys match exactly, but 155 legacy price keys are absent from
+  cloud; weather keys match but 40,086 daily values differ. The source
+  snapshots are not proven identical. Source replay still proves only
+  reproducibility from the uploaded cloud snapshots; see
+  [`docs/migration/evidence/legacy-overlap-20261112.md`](docs/migration/evidence/legacy-overlap-20261112.md).
 - The national WFP aggregate is available from 2007-01 to 2020-03 (1,263
   rows/158 months), while provincial prices cover 2016-07 to 2026-06 (27,635
   rows/85 months). They should not be shown as one directly comparable series
