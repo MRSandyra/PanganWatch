@@ -4,13 +4,30 @@ This directory adds a **batch-only** Databricks Lakehouse implementation beside 
 
 ## Status
 
-`CLOUD_BLOCKED`. No authenticated Databricks Free Edition workspace was available during this change, so every cloud capability remains `NOT_EXECUTED`; see [`../docs/migration/01-workspace-preflight.md`](../docs/migration/01-workspace-preflight.md). The local implementation is present, but its pytest suite remains `NOT_EXECUTED` because this environment cannot resolve required packages.
+`CLOUD_PARTIAL` as of 2026-11-11. The Databricks Free Edition workspace,
+reference data, both Bronze/Silver paths, DQ, Gold marts, source-replay
+reconciliation, the nine-task `panganwatch_batch` job, and the published
+dashboard were observed successfully. The migration suite also passes locally:
+`uv run pytest -q databricks/tests` reports 25 passed.
 
-## Offline workflow
+This is intentionally not `CLOUD_VERIFIED` or `PORTFOLIO_READY`: no row-level
+parity comparison has been executed against the pre-migration local/legacy
+database. See
+[`../docs/migration/10-final-verification.md`](../docs/migration/10-final-verification.md)
+and the sanitized
+[`../docs/migration/evidence/cloud-run-20261111.md`](../docs/migration/evidence/cloud-run-20261111.md).
 
-1. Freeze an existing allowed source file: `python scripts/generate_snapshot_manifest.py <file> --source-name hdx_wfp --source-url <actual-url> --license CC-BY-IGO`.
-2. Validate it before upload: `python scripts/prepare_databricks_upload.py <file> <manifest>`.
-3. Run `python -m pytest databricks/tests -q`.
-4. After a successful Free Edition preflight, upload the exact validated file to the indicated Unity Catalog Volume, configure the manual Lakeflow job, and run notebooks in numerical order.
+## Local validation and cloud reruns
 
-The notebooks are intentionally thin. Reusable source, Silver, DQ, Gold, and reconciliation functions live in `src/`; `pyspark`/`delta-spark` are only required in Databricks, not in the original local runtime.
+1. Freeze an allowed source file: `uv run python scripts/export_frozen_snapshot.py <file> --source-name hdx_wfp --source-url <actual-url> --license CC-BY-IGO --destination <directory>`.
+2. Validate it before upload: `uv run python scripts/prepare_databricks_upload.py <file> <manifest> --catalog workspace`.
+3. Run `uv run pytest -q databricks/tests` and `git diff --check`.
+4. Upload the exact validated snapshot and manifest to the existing Unity
+   Catalog Volume, then run the configured `panganwatch_batch` job. Use the
+   matching snapshot paths as job parameters; do not point a rerun at a live,
+   refreshed API response.
+
+The notebooks are intentionally thin. Reusable source, Silver, DQ, Gold, and
+reconciliation functions live in `src/`; `pyspark`/`delta-spark` are only
+required in Databricks, not in the original local runtime. Detailed click-by-
+click owner actions live in [`../docs/migration/owner-actions.md`](../docs/migration/owner-actions.md).

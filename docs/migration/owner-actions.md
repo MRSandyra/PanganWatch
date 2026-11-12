@@ -2,7 +2,7 @@
 
 Panduan ini untuk pemilik workspace. Ikuti secara berurutan dari repository lokal hingga bukti cloud. Jangan memakai layanan berbayar, object storage eksternal, atau hasil simulasi untuk melewati suatu langkah.
 
-> **Batas implementasi saat ini:** artefak snapshot, manifest, schema, Bronze, Silver, DQ, Gold, reconciliation, SQL, dan definisi Lakeflow sudah ada di repository, tetapi belum pernah semuanya dijalankan di workspace Databricks. Notebook `02_silver.py` menjalankan mapping HDX/WFP yang disetujui: hanya `National Average` menjadi kode provinsi BPS `00`; wilayah lain tanpa crosswalk BPS tercatat di governance dan tidak diterbitkan ke Silver. Notebook `03_quality.py` mengevaluasi rule harga yang dapat dinilai dari tabel Silver dan memblokir Gold bila error rule gagal atau reference table belum tersedia. Notebook `05_reconciliation.py` masih perlu dihubungkan ke hasil eksekusi yang sebenarnya. Jangan mengklaim job cloud berhasil sebelum seluruh verifikasi di bawah selesai.
+> **Status aktual (2026-11-11): `CLOUD_PARTIAL`.** Snapshot, manifest, schema, Bronze, Silver, DQ, Gold, source-replay reconciliation, SQL, definisi job, dan dashboard telah dieksekusi di Databricks Free Edition. Job `panganwatch_batch` menyelesaikan sembilan task dengan sukses. Mapping HDX/WFP yang dipakai adalah: hanya `National Average` menjadi kode provinsi BPS `00`; wilayah atau komoditas tanpa crosswalk tetap tercatat di governance dan tidak dipaksakan ke Silver. Source replay telah lulus, tetapi itu bukan perbandingan row-level terhadap database legacy lokal; legacy parity masih `NOT_EXECUTED`. Rincian bukti ada di [`evidence/cloud-run-20261111.md`](evidence/cloud-run-20261111.md).
 
 ## Alur untuk pemula
 
@@ -34,7 +34,7 @@ Free Edition menggunakan serverless compute dan fair-use quota. Bila kuota habis
    git branch --show-current
    ```
 
-2. Gunakan branch `feature/databricks-free-edition`. Jangan menjalankan `git reset`, menghapus perubahan pengguna, atau `docker compose down -v`.
+2. Repository ini menggunakan branch `main` langsung. Pastikan `git branch --show-current` menampilkan `main`; jangan membuat branch baru kecuali kebijakan repository berubah. Jangan menjalankan `git reset`, menghapus perubahan pengguna, atau `docker compose down -v`.
 3. MongoDB, PostgreSQL, Airflow, dbt, dan Kafka yang ada adalah baseline dan harus tetap aktif. Kafka streaming sengaja tidak masuk MVP batch Databricks.
 4. Saat akses package tersedia, pulihkan environment dan jalankan validasi:
 
@@ -205,7 +205,7 @@ Lalu buka PowerShell pada komputer lokal dan jalankan perintah ini **satu baris 
 
 ```powershell
 Set-Location 'D:\My Life\Projects\panganwatch'
-git switch feature/databricks-free-edition
+git switch main
 git status --short
 git diff --check
 git add .gitignore README.md databricks docs/migration scripts .github/workflows/databricks-ci.yml
@@ -218,13 +218,13 @@ Jika `git remote -v` tidak menampilkan `origin`, tambahkan remote baru berikut *
 
 ```powershell
 git remote add origin 'https://github.com/<USERNAME_ANDA>/panganwatch.git'
-git push -u origin feature/databricks-free-edition
+git push -u origin main
 ```
 
 Jika `origin` sudah ada dan memang menunjuk ke repository yang benar, **jangan** jalankan `git remote add`; cukup jalankan:
 
 ```powershell
-git push -u origin feature/databricks-free-edition
+git push -u origin main
 ```
 
 Jika GitHub meminta autentikasi, selesaikan browser/device login yang ditampilkan Git. Jangan menempelkan GitHub token ke terminal history, dokumentasi, atau file proyek. Sebelum `git add`, periksa `git status`; jangan commit `.env`, `data/migration/snapshots/`, atau file lain yang tidak Anda kenali.
@@ -257,12 +257,12 @@ Databricks menyarankan GitHub App/OAuth ini untuk GitHub hosted; gunakan PAT Git
    | Git repository URL | `https://github.com/<USERNAME_ANDA>/panganwatch.git` |
    | Git provider | `GitHub` |
    | Git folder name | `panganwatch` |
-   | Branch | `feature/databricks-free-edition` jika field branch ditampilkan; bila tidak, clone dahulu lalu ubah branch di Git dialog |
+   | Branch | `main` jika field branch ditampilkan; bila tidak, clone dahulu lalu pastikan branch aktif adalah `main` |
    | Sparse checkout | Biarkan nonaktif / default |
 
 6. Klik **Create Git folder** dan tunggu clone selesai.
 7. Di Workspace, buka folder `panganwatch` → `databricks` → `notebooks` → `00_preflight.py`.
-8. Jika Git folder membuka branch default `main`, klik indikator branch/Git di dekat nama folder/notebook, pilih `feature/databricks-free-edition`, lalu pilih **Pull**. Jangan memilih **Reset**.
+8. Pastikan indikator branch/Git di dekat nama folder/notebook menampilkan `main`, lalu pilih **Pull** saat ingin mengambil commit terbaru. Jangan memilih **Reset**.
 9. Pastikan struktur ini terlihat sebelum menjalankan notebook:
 
    ```text
@@ -280,7 +280,7 @@ Databricks mendokumentasikan urutan **Workspace → Create → Git folder → re
 
 ## 7. Konfigurasi dan eksekusi pipeline
 
-1. Pilihan yang direkomendasikan adalah Git folder. Push branch `feature/databricks-free-edition` ke remote Git Anda setelah meninjau perubahan lokal, lalu di Databricks pilih **Workspace → Create → Git folder**, masukkan URL remote, dan pilih branch tersebut. Git folder menyimpan notebook dan `databricks/src/` pada satu lokasi yang dapat direproduksi. Jika repository private, atur credential Git hanya di UI Databricks; jangan pernah masukkan credential Git ke repo.
+1. Pilihan yang direkomendasikan adalah Git folder. Push `main` ke remote Git Anda setelah meninjau perubahan lokal, lalu di Databricks pilih **Workspace → Create → Git folder**, masukkan URL remote, dan pilih branch `main`. Git folder menyimpan notebook dan `databricks/src/` pada satu lokasi yang dapat direproduksi. Jika repository private, atur credential Git hanya di UI Databricks; jangan pernah masukkan credential Git ke repo.
 2. Jika belum punya remote Git, Anda boleh mengimpor `00_preflight.py` untuk preflight manual saja. Jangan mencoba menjalankan keseluruhan workflow dari upload file acak: notebook lain perlu modul di `databricks/src/`. Buat remote Git sebelum Bronze/Silver deployment penuh.
 3. Setelah Git folder dibuat, buka `databricks/notebooks/00_preflight.py` dari folder itu. Notebook akan menambahkan folder proyek ke Python path dan mengimpor `src.config` secara lokal.
 4. Review `migration.yml`, `table_mapping.yml`, dan `quality_mapping.yml`. Ubah hanya nilai yang benar-benar merepresentasikan workspace/snapshot aktual; jangan hardcode URL personal atau credential.
@@ -297,7 +297,7 @@ Jangan menginstal package bernama `databricks` atau `databricks.src`. Nama `data
 
 1. Pastikan Anda membuka notebook dari Git folder yang berisi **seluruh** repository, bukan file `00_preflight.py` yang diimpor sendirian.
 2. Pastikan struktur di Workspace/Git folder tetap `.../databricks/notebooks/00_preflight.py` dan `.../databricks/src/config.py`.
-3. Pull branch `feature/databricks-free-edition` yang berisi perbaikan import ini, lalu buka ulang notebook. Notebook sekarang menurunkan path Git folder secara otomatis dan memakai `from src.config import ...`.
+3. Pull branch `main` yang berisi perbaikan import ini, lalu buka ulang notebook. Notebook sekarang menurunkan path Git folder secara otomatis dan memakai `from src.config import ...`.
 4. Bila Anda belum memakai Git folder, gunakan preflight SQL pada langkah 2 terlebih dahulu. Jangan menjalankan Bronze/Silver sampai seluruh folder `databricks/src/` tersedia pada runtime.
 
 ## 8. Buat Lakeflow Job manual

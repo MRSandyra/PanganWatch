@@ -1,6 +1,18 @@
 # PanganWatch
 
-> **Summary:** A governed food-price and weather data platform showing Data Management & Analytics practice: batch + streaming pipelines, a DAMA-mapped data quality engine, metadata/lineage/ownership, Airflow orchestration, and an analytics report. Price data comes from HDX WFP (monthly, 34 of 38 provinces), so coverage and source limitations are documented honestly in the *Limitations* section. All numbers below are computed from the project database.
+> **Summary:** PanganWatch is a governed food-price and weather data platform.
+> Its original local MongoDB/PostgreSQL/Airflow/dbt/Kafka implementation is
+> retained, while a batch-focused Databricks Free Edition Lakehouse has been
+> implemented and executed using immutable WFP and Open-Meteo snapshots. Price
+> coverage, source limitations, and the remaining legacy-parity gap are stated
+> explicitly rather than inferred from the cloud run.
+
+> **Current delivery status (2026-11-11): `CLOUD_PARTIAL`.** The Databricks
+> preflight, reference data, Bronze/Silver/Gold pipeline, DQ gate,
+> source-replay reconciliation, nine-task batch job, and four-page published
+> dashboard have all been observed successfully. A row-level comparison with
+> the pre-migration local/legacy database has **not** been run, so this project
+> must not be described as fully legacy-parity verified.
 
 ## 1. Business problem
 
@@ -228,6 +240,82 @@ in [`docs/handover.md`](docs/handover.md).
 
 This repository is a portfolio project, not an official statistics product.
 
-## Databricks Free Edition migration
+## Databricks Free Edition Lakehouse
 
-The local MongoDB/PostgreSQL/Airflow/dbt/Kafka platform remains intact while a batch-oriented Databricks Lakehouse migration is implemented in [`databricks/`](databricks/). It uses frozen, checksummed source snapshots; Unity Catalog Volume landing; Bronze/Silver/Gold Delta tables; the existing 27-rule DQ semantics; and a manual Lakeflow workflow. The current status is **CLOUD_BLOCKED**: no authenticated Free Edition workspace was available, so no cloud objects, job runs, SQL results, or dashboard are claimed. The honest deployment checklist, architecture, constraints, and owner actions are in [`docs/migration/`](docs/migration/).
+The original local platform remains intact. The Databricks implementation in
+[`databricks/`](databricks/) is a separate, batch-only Lakehouse path based on
+frozen, checksummed snapshots rather than live API refreshes. It uses Unity
+Catalog Volumes for landing and Delta tables for Bronze, Silver, Gold, and
+governance.
+
+```mermaid
+flowchart LR
+    WFP[HDX/WFP CSV snapshot] --> V[Unity Catalog Volume]
+    OM[Open-Meteo JSONL snapshot] --> V
+    V --> B[Bronze Delta]
+    B --> R[Reference dimensions and aliases]
+    R --> S[Silver Delta]
+    S --> Q[DQ and quarantine governance]
+    Q -->|no blocking rules| G[Gold marts]
+    G --> D[Published AI/BI dashboard]
+    S --> RC[Source-replay reconciliation]
+```
+
+### Executed cloud result
+
+| Area | Observed result |
+|---|---|
+| Catalog and landing | Unity Catalog `workspace`; volume `/Volumes/workspace/pw_landing/snapshots` |
+| Reference data | 38 provinces, 14 commodities, 34 province aliases, and 69 commodity aliases |
+| Price path | `workspace.pw_bronze.hdx_wfp_raw` → `workspace.pw_silver.harga_pangan` |
+| Weather path | `workspace.pw_bronze.open_meteo_raw` → `workspace.pw_silver.cuaca_harian`; 269,496 daily rows across 38 provinces from 2007-01-15 to 2026-06-15 |
+| Gold marts | `fct_harga_bulanan`, `mart_disparitas_provinsi`, and `mart_cuaca_harga_bulanan` |
+| DQ gate | 14 price and 8 weather rules evaluated; no blocking rules |
+| Source replay | Price: 164,750 expected/actual; weather: 269,496 expected/actual; zero missing or unexpected rows |
+| Job | Manual `panganwatch_batch` job: nine successful tasks in 2m42s |
+| Dashboard | Four published pages: national commodity trend, data quality, provincial disparity, and monthly rainfall |
+
+The complete sanitized evidence, including the job metrics, is in
+[`docs/migration/evidence/cloud-run-20261111.md`](docs/migration/evidence/cloud-run-20261111.md).
+No workspace host, dashboard URL, user identity, credential, or snapshot file
+is stored in that evidence.
+
+### Run and maintain
+
+The configured job definition is
+[`databricks/jobs/panganwatch_batch.yml`](databricks/jobs/panganwatch_batch.yml).
+It runs these tasks in dependency order:
+
+```text
+preflight → reference / WFP Bronze / weather Bronze
+→ WFP Silver / weather Silver → quality → Gold → reconciliation
+```
+
+For local checks after changes:
+
+```powershell
+uv run pytest -q databricks/tests
+git diff --check
+```
+
+For a full owner-facing rerun procedure, including exact notebook parameters,
+snapshot validation, Git-folder sync, and the dashboard workflow, use
+[`docs/migration/owner-actions.md`](docs/migration/owner-actions.md). The
+Databricks-specific source layout is described in
+[`databricks/README.md`](databricks/README.md).
+
+### Important Lakehouse limitations
+
+- **Legacy parity is not executed.** Source replay proves reproducibility from
+  the uploaded snapshots; it does not prove equality with the old local
+  database.
+- The national WFP aggregate is available from 2007-01 to 2020-03 (1,263
+  rows/158 months), while provincial prices cover 2016-07 to 2026-06 (27,635
+  rows/85 months). They should not be shown as one directly comparable series
+  outside their overlap.
+- 390 source price records for `Fuel (kerosene)`, `Milk (condensed)`, and
+  `Wheat flour` remain unmapped in governance rather than being forced into a
+  reference commodity.
+- Price warnings `HP-010`, `HP-011`, `HP-012`, and `HP-014` are non-blocking
+  and remain visible in the dashboard.
+- Price/weather visuals are descriptive; they do not show causation.
