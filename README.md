@@ -1,18 +1,32 @@
 # PanganWatch
 
-> **Summary:** PanganWatch is a governed food-price and weather data platform.
-> Its original local MongoDB/PostgreSQL/Airflow/dbt/Kafka implementation is
-> retained, while a batch-focused Databricks Free Edition Lakehouse has been
-> implemented and executed using immutable WFP and Open-Meteo snapshots. Price
-> coverage, source limitations, and the remaining legacy-parity gap are stated
-> explicitly rather than inferred from the cloud run.
+> **When a food-price dashboard says a province is expensive, what proves that
+> the number deserves to be trusted?**
+>
+> PanganWatch is my answer to that data-engineering problem. It begins with
+> public food-price and weather data, preserves every source response as
+> evidence, and carries it through reference mapping, data-quality controls,
+> reconciliation, orchestration, and a published Databricks dashboard.
+>
+> The project is deliberately built around the less visible work behind a
+> chart: handling changing upstream sources, making data gaps explicit instead
+> of hiding them, preserving lineage, and proving that a cloud replay agrees
+> with a recovered legacy baseline.
 
-> **Current delivery status (2026-11-12): `PORTFOLIO_READY`.** The Databricks
-> preflight, reference data, Bronze/Silver/Gold pipeline, DQ gate,
-> source-replay reconciliation, nine-task batch job, and four-page published
-> dashboard have all been observed successfully. Recovered legacy raw Bronze
-> payloads were replayed to an isolated cloud schema with zero missing keys and
-> zero value mismatches against the recovered PostgreSQL legacy state.
+## What this project demonstrates
+
+- **End-to-end data engineering:** a retained local MongoDB/PostgreSQL/Airflow/
+  dbt/Kafka implementation and an executed batch-focused Databricks Free
+  Edition Lakehouse using immutable WFP and Open-Meteo snapshots.
+- **Governed transformation:** Bronze, Silver, and Gold layers; reference-data
+  mapping; data-quality gates; quarantine and governance tables; and
+  source-replay reconciliation.
+- **Defensible migration work:** recovered source-native legacy Bronze payloads
+  were replayed into an isolated cloud schema with zero missing business keys
+  and zero value mismatches against the recovered PostgreSQL legacy state.
+- **A reviewable outcome:** a nine-task Databricks batch job and a four-page
+  published dashboard were run successfully, with source coverage and
+  limitations documented rather than inferred.
 
 ## 1. Business problem
 
