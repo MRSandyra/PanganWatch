@@ -2,9 +2,11 @@
 
 Actual sanitized evidence is available in
 [cloud-run-20261111.md](cloud-run-20261111.md) and
-[legacy-overlap-20261112.md](legacy-overlap-20261112.md). They record the
-successful Databricks Free Edition run and the failed bounded legacy overlap
-comparison without exposing a workspace host, URL, or user identity.
+[legacy-overlap-20261112.md](legacy-overlap-20261112.md), and
+[legacy-raw-replay-20261112.md](legacy-raw-replay-20261112.md). They record
+the successful Databricks Free Edition run, the diagnostic bounded legacy
+overlap failure, and the successful raw replay without exposing a workspace
+host, URL, or user identity.
 
 For each future actual operation, add a sanitized JSON or Markdown record with:
 

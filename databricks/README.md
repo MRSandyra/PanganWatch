@@ -4,18 +4,19 @@ This directory adds a **batch-only** Databricks Lakehouse implementation beside 
 
 ## Status
 
-`CLOUD_PARTIAL` as of 2026-11-12. The Databricks Free Edition workspace,
+`PORTFOLIO_READY` as of 2026-11-12. The Databricks Free Edition workspace,
 reference data, both Bronze/Silver paths, DQ, Gold marts, source-replay
 reconciliation, the nine-task `panganwatch_batch` job, and the published
 dashboard were observed successfully. The migration suite also passes locally:
 `uv run pytest -q databricks/tests` reports 25 passed.
 
-This is intentionally not `CLOUD_VERIFIED` or `PORTFOLIO_READY`: the executed
-bounded overlap comparison against recovered legacy data failed because the
-source snapshots are not proven identical. See
+The recovered legacy raw Bronze payloads were replayed into isolated tables
+with zero missing keys and zero value mismatches against the restored legacy
+PostgreSQL state. Production tables and the published dashboard were not
+modified. See
 [`../docs/migration/10-final-verification.md`](../docs/migration/10-final-verification.md)
 and the sanitized
-[`../docs/migration/evidence/legacy-overlap-20261112.md`](../docs/migration/evidence/legacy-overlap-20261112.md).
+[`../docs/migration/evidence/legacy-raw-replay-20261112.md`](../docs/migration/evidence/legacy-raw-replay-20261112.md).
 
 ## Local validation and cloud reruns
 

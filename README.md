@@ -7,12 +7,12 @@
 > coverage, source limitations, and the remaining legacy-parity gap are stated
 > explicitly rather than inferred from the cloud run.
 
-> **Current delivery status (2026-11-11): `CLOUD_PARTIAL`.** The Databricks
+> **Current delivery status (2026-11-12): `PORTFOLIO_READY`.** The Databricks
 > preflight, reference data, Bronze/Silver/Gold pipeline, DQ gate,
 > source-replay reconciliation, nine-task batch job, and four-page published
-> dashboard have all been observed successfully. A row-level comparison with
-> the pre-migration local/legacy database has **not** been run, so this project
-> must not be described as fully legacy-parity verified.
+> dashboard have all been observed successfully. Recovered legacy raw Bronze
+> payloads were replayed to an isolated cloud schema with zero missing keys and
+> zero value mismatches against the recovered PostgreSQL legacy state.
 
 ## 1. Business problem
 
@@ -306,12 +306,11 @@ Databricks-specific source layout is described in
 
 ### Important Lakehouse limitations
 
-- **Legacy parity did not pass the executed bounded overlap test.** All 20,709
-  common price keys match exactly, but 155 legacy price keys are absent from
-  cloud; weather keys match but 40,086 daily values differ. The source
-  snapshots are not proven identical. Source replay still proves only
-  reproducibility from the uploaded cloud snapshots; see
-  [`docs/migration/evidence/legacy-overlap-20261112.md`](docs/migration/evidence/legacy-overlap-20261112.md).
+- **Legacy parity passed through recovered raw Bronze replay.** The isolated
+  Databricks replay has 0 missing keys and 0 value mismatches for 20,864 price
+  and 17,936 weather records. The earlier bounded comparison against newer
+  cloud snapshots remains documented as evidence of source drift; see
+  [`docs/migration/evidence/legacy-raw-replay-20261112.md`](docs/migration/evidence/legacy-raw-replay-20261112.md).
 - The national WFP aggregate is available from 2007-01 to 2020-03 (1,263
   rows/158 months), while provincial prices cover 2016-07 to 2026-06 (27,635
   rows/85 months). They should not be shown as one directly comparable series

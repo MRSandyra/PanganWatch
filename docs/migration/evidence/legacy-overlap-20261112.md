@@ -53,9 +53,12 @@ version, coordinate treatment, or historical response was used at its original
 load time. Treat the difference as **source-snapshot drift under
 investigation**, not as a transform pass or a causal data-quality conclusion.
 
-## Required next step for full legacy parity
+## Resolution
 
-Recover the original Bronze/raw payloads from the old device's
-`panganwatch-mongo` volume, freeze them with manifests, and use those immutable
-inputs for both legacy replay and a dedicated cloud replay. Until then, the
-migration remains `CLOUD_PARTIAL`.
+The required raw payloads were recovered from the old device's
+`panganwatch-mongo` volume, frozen with manifests, and replayed to an isolated
+cloud schema. That exact replay passed with zero missing keys and zero value
+mismatches; see
+[legacy-raw-replay-20261112.md](legacy-raw-replay-20261112.md). This bounded
+failure remains as evidence that a refreshed external API response cannot
+substitute for an immutable historical snapshot.

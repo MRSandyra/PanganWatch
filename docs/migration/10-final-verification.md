@@ -1,13 +1,12 @@
 # Final verification
 
-**Migration status: CLOUD_PARTIAL.**
+**Migration status: PORTFOLIO_READY.**
 
 The Databricks Free Edition implementation has been executed successfully with
-actual cloud artifacts and a published dashboard.  It is deliberately not
-labelled `CLOUD_VERIFIED` or `PORTFOLIO_READY`: a parity comparison with the
-pre-migration local/legacy database has not been executed.  The reconciliation
-below is a source-replay check against the uploaded immutable snapshots and
-cloud Bronze/Silver transformations; it is not a legacy parity assertion.
+actual cloud artifacts, a published dashboard, and exact legacy parity through
+recovered source-native Bronze payloads. The raw replay wrote only to an
+isolated schema and produced zero missing keys and zero value mismatches against
+the restored legacy PostgreSQL state.
 
 ## Verified in Databricks
 
@@ -20,20 +19,21 @@ cloud Bronze/Silver transformations; it is not a legacy parity assertion.
 | DQ governance | 14 price and 8 weather rules evaluated; no blocking rules; four non-blocking price warnings remain | PASSED |
 | Gold marts | `fct_harga_bulanan`, `mart_disparitas_provinsi`, and `mart_cuaca_harga_bulanan` built | PASSED |
 | Source replay | Price 164,750 expected/actual and weather 269,496 expected/actual; zero missing or unexpected rows | PASSED |
+| Legacy raw replay | 20,864 price and 17,936 weather records; zero missing keys and zero value mismatches | PASSED |
 | Databricks job | `panganwatch_batch` completed successfully: nine tasks green, 49 queries, 5,077,195 rows read, 434,401 rows written | PASSED |
 | Published dashboard | Four published pages cover national commodity prices, DQ, provincial disparity, and monthly rainfall | PASSED |
 
-Sanitized evidence is recorded in [cloud-run-20261111.md](evidence/cloud-run-20261111.md)
-and [legacy-overlap-20261112.md](evidence/legacy-overlap-20261112.md).
+Sanitized evidence is recorded in [cloud-run-20261111.md](evidence/cloud-run-20261111.md),
+[legacy-overlap-20261112.md](evidence/legacy-overlap-20261112.md), and
+[legacy-raw-replay-20261112.md](evidence/legacy-raw-replay-20261112.md).
 
 ## Known limitations and decisions
 
-- **Legacy parity has been attempted and FAILED as a bounded overlap test.**
-  Recovered legacy data has 20,709 exact common price keys plus 155
-  legacy-only price keys; weather has matching keys but 40,086 value
-  mismatches. The source snapshots are not proven identical, so this cannot
-  establish parity. This is the reason for the `CLOUD_PARTIAL` status; see
-  [legacy overlap evidence](evidence/legacy-overlap-20261112.md).
+- **Legacy parity passed through raw replay.** Reconstructed snapshots from
+  recovered Mongo Bronze records produce exact matches for all 20,864 price
+  and 17,936 weather records in the restored legacy database. The earlier
+  bounded comparison against newer production snapshots failed as expected
+  because those inputs were not identical; it remains documented for lineage.
 - WFP national aggregate prices cover 2007-01 through 2020-03 (1,263 rows,
   158 months). Provincial price coverage is 2016-07 through 2026-06 (27,635
   rows, 85 months). The two series must not be presented as a continuous,

@@ -1,5 +1,5 @@
 # Values are deliberately workspace-neutral. Set PANGANWATCH_CATALOG only after preflight.
-migration_status: CLOUD_PARTIAL
+migration_status: PORTFOLIO_READY
 catalog_env: PANGANWATCH_CATALOG
 schemas:
   landing: pw_landing
